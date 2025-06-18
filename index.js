@@ -3,7 +3,7 @@ import pool from './config/db.js'; // Importa el pool de conexiones
 import ganadoRoutes from './routes/ganadoRoutes.js'; // Importa las rutas de ganado
 import empleadoRoutes from './routes/empleadoRoutes.js'; // Importa las rutas de empleado
 import usuarioRoutes from './routes/usuarioRoutes.js'; // Importa las rutas de usuario
-import personaRoutes from './routes/personaRoutes.js';
+import personasRoutes from './routes/personasRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,7 +25,7 @@ app.use('/api/empleado', empleadoRoutes);
 // Usar las rutas de usuario
 app.use('/api/usuario', usuarioRoutes);
 
-app.use('/api/personas', personaRoutes);
+app.use('/api/personas', personasRoutes);
 
 // Manejo de errores para rutas no encontradas
 app.use((req, res, next) => {
