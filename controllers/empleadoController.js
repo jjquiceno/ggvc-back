@@ -1,6 +1,6 @@
 import pool from '../config/db.js';
 
-// Obtener todos los empleados
+// Obtener todos los registros de empleado
 export const getAllEmpleados = async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM empleado');
@@ -13,13 +13,13 @@ export const getAllEmpleados = async (req, res) => {
   }
 };
 
-// Obtener un empleado por ID
-export const getEmpleadoById = async (req, res) => {
+// Obtener un registro de empleado por ID
+export const getEmpleado = async (req, res) => {
   const {
-    id
+    id_empleado
   } = req.params;
   try {
-    const [rows] = await pool.query('SELECT * FROM empleado WHERE id_empleado = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM empleado WHERE id_empleado = ?', [id_empleado]);
     if (rows.length === 0) {
       return res.status(404).json({
         message: 'Empleado no encontrado'
@@ -27,29 +27,35 @@ export const getEmpleadoById = async (req, res) => {
     }
     res.json(rows[0]);
   } catch (err) {
-    console.error('Error al obtener empleado por ID:', err);
+    console.error('Error al obtener empleado:', err);
     res.status(500).json({
       message: 'Error interno del servidor'
     });
   }
 };
 
-// Crear un nuevo empleado
+// Crear un nuevo registro de empleado
 export const createEmpleado = async (req, res) => {
   const {
+    id_empleado,
     id,
     nombre,
     email,
     telefono
-  } = req.body; // Asegúrate de que 'id' se incluya si es una FK
+  } = req.body;
+  if (!id_empleado || !id || !nombre || !email || !telefono) {
+    return res.status(400).json({
+      message: 'Faltan campos requeridos para empleado (id_empleado, id, nombre, email, telefono)'
+    });
+  }
   try {
     const [result] = await pool.query(
-      'INSERT INTO empleado (id, nombre, email, telefono) VALUES (?, ?, ?, ?)',
-      [id, nombre, email, telefono]
+      'INSERT INTO empleado (id_empleado, id, nombre, email, telefono) VALUES (?, ?, ?, ?, ?)',
+      [id_empleado, id, nombre, email, telefono]
     );
     res.status(201).json({
       message: 'Empleado creado exitosamente',
-      id_empleado: result.insertId
+      empleadoId: id_empleado // El ID es proporcionado por el cliente en este caso
     });
   } catch (err) {
     console.error('Error al crear empleado:', err);
@@ -59,20 +65,21 @@ export const createEmpleado = async (req, res) => {
   }
 };
 
-// Actualizar un empleado
+// Actualizar un registro de empleado
 export const updateEmpleado = async (req, res) => {
   const {
-    id
+    id_empleado
   } = req.params;
   const {
+    id,
     nombre,
     email,
     telefono
   } = req.body;
   try {
     const [result] = await pool.query(
-      'UPDATE empleado SET nombre = ?, email = ?, telefono = ? WHERE id_empleado = ?',
-      [nombre, email, telefono, id]
+      'UPDATE empleado SET id = ?, nombre = ?, email = ?, telefono = ? WHERE id_empleado = ?',
+      [id, nombre, email, telefono, id_empleado]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -90,13 +97,13 @@ export const updateEmpleado = async (req, res) => {
   }
 };
 
-// Eliminar un empleado
+// Eliminar un registro de empleado
 export const deleteEmpleado = async (req, res) => {
   const {
-    id
+    id_empleado
   } = req.params;
   try {
-    const [result] = await pool.query('DELETE FROM empleado WHERE id_empleado = ?', [id]);
+    const [result] = await pool.query('DELETE FROM empleado WHERE id_empleado = ?', [id_empleado]);
     if (result.affectedRows === 0) {
       return res.status(404).json({
         message: 'Empleado no encontrado para eliminar'
