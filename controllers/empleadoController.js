@@ -4,7 +4,7 @@ import pool from '../config/db.js';
 export const getAllEmpleados = async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM empleado');
-    res.json(rows);
+    res.status(200).json(rows);
   } catch (err) {
     console.error('Error al obtener empleados:', err);
     res.status(500).json({
@@ -25,7 +25,7 @@ export const getEmpleado = async (req, res) => {
         message: 'Empleado no encontrado'
       });
     }
-    res.json(rows[0]);
+    res.status(200).json(rows[0]);
   } catch (err) {
     console.error('Error al obtener empleado:', err);
     res.status(500).json({
@@ -42,6 +42,7 @@ export const createEmpleado = async (req, res) => {
     email,
     telefono
   } = req.body;
+
   if (!id || !nombre || !email || !telefono) {
     return res.status(400).json({
       message: 'Faltan campos requeridos para empleado (, id, nombre, email, telefono)'
