@@ -37,7 +37,6 @@ export const getUsuario = async (req, res) => {
 // Crear un nuevo registro de usuario (incluyendo empleado y persona)
 export const createUsuario = async (req, res) => {
   const {
-    id_empleado, // Nuevo campo: id_empleado para la tabla empleado
     id, // Nuevo campo: id para la tabla persona (que es el mismo id_empleado)
     nombre_empleado, // Nuevo campo: nombre para la tabla empleado y persona
     email_empleado, // Nuevo campo: email para la tabla empleado
@@ -48,7 +47,7 @@ export const createUsuario = async (req, res) => {
   } = req.body;
 
   // Validación básica de campos requeridos
-  if (!id_empleado || !nombre_empleado || !email_empleado || !telefono_empleado || !usuario || !contrasena || !rol) {
+  if (!nombre_empleado || !email_empleado || !telefono_empleado || !usuario || !contrasena || !rol) {
     return res.status(400).json({
       message: 'Faltan campos requeridos para crear el empleado, la persona y el usuario.'
     });
@@ -62,10 +61,12 @@ export const createUsuario = async (req, res) => {
     // 1. Insertar en la tabla `empleado`
     // El id_empleado y el id de la tabla persona son el mismo valor en tu esquema
     const [empleadoResult] = await connection.query(
-      'INSERT INTO empleado (id_empleado, id, nombre, email, telefono) VALUES (?, ?, ?, ?, ?)',
-      [id_empleado, id, nombre_empleado, email_empleado, telefono_empleado]
+      'INSERT INTO empleado (id, nombre, email, telefono) VALUES (?, ?, ?, ?)',
+      [id, nombre_empleado, email_empleado, telefono_empleado]
     );
 
+    const id_empleado_generado = empleadoResult.insertId;
+    
     // 2. Insertar en la tabla `persona`
     // El 'usuario' de la tabla persona es el mismo 'usuario' del login
     const [personaResult] = await connection.query(
@@ -78,12 +79,13 @@ export const createUsuario = async (req, res) => {
       'INSERT INTO usuario (usuario, contraseña, rol) VALUES (?, ?, ?)',
       [usuario, contrasena, rol]
     );
+    
 
     await connection.commit(); // Confirmar la transacción
 
     res.status(201).json({
       message: 'Empleado, persona y usuario creados exitosamente',
-      empleadoId: id_empleado,
+      empleadoId: id_empleado_generado,
       usuarioCreado: usuario
     });
 

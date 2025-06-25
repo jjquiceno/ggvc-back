@@ -37,25 +37,24 @@ export const getEmpleado = async (req, res) => {
 // Crear un nuevo registro de empleado
 export const createEmpleado = async (req, res) => {
   const {
-    id_empleado,
     id,
     nombre,
     email,
     telefono
   } = req.body;
-  if (!id_empleado || !id || !nombre || !email || !telefono) {
+  if (!id || !nombre || !email || !telefono) {
     return res.status(400).json({
-      message: 'Faltan campos requeridos para empleado (id_empleado, id, nombre, email, telefono)'
+      message: 'Faltan campos requeridos para empleado (, id, nombre, email, telefono)'
     });
   }
   try {
     const [result] = await pool.query(
-      'INSERT INTO empleado (id_empleado, id, nombre, email, telefono) VALUES (?, ?, ?, ?, ?)',
-      [id_empleado, id, nombre, email, telefono]
+      'INSERT INTO empleado (id, nombre, email, telefono) VALUES (?, ?, ?, ?)',
+      [id, nombre, email, telefono]
     );
     res.status(201).json({
       message: 'Empleado creado exitosamente',
-      empleadoId: id_empleado // El ID es proporcionado por el cliente en este caso
+      id_empleado: result.insertId,
     });
   } catch (err) {
     console.error('Error al crear empleado:', err);
