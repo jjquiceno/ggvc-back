@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import bcrypt from 'bcrypt';
 
 // Obtener todos los registros de usuario
 export const getAllUsuario = async (req, res) => {
@@ -37,7 +38,7 @@ export const getUsuario = async (req, res) => {
 // Crear un nuevo registro de usuario (incluyendo empleado y persona)
 export const createUsuario = async (req, res) => {
   const {
-    id, // Nuevo campo: id para la tabla persona (que es el mismo id_empleado)
+    id, // Nuevo campo: id para la tabla persona
     nombre_empleado, // Nuevo campo: nombre para la tabla empleado y persona
     email_empleado, // Nuevo campo: email para la tabla empleado
     telefono_empleado, // Nuevo campo: telefono para la tabla empleado
@@ -47,7 +48,7 @@ export const createUsuario = async (req, res) => {
   } = req.body;
 
   // Validación básica de campos requeridos
-  if (!nombre_empleado || !email_empleado || !telefono_empleado || !usuario || !contrasena || !rol) {
+  if (!id || !nombre_empleado || !email_empleado || !telefono_empleado || !usuario || !contrasena || !rol) {
     return res.status(400).json({
       message: 'Faltan campos requeridos para crear el empleado, la persona y el usuario.'
     });
@@ -58,28 +59,28 @@ export const createUsuario = async (req, res) => {
     connection = await pool.getConnection(); // Obtener una conexión del pool
     await connection.beginTransaction(); // Iniciar la transacción
 
-    // 1. Insertar en la tabla `empleado`
-    // El id_empleado y el id de la tabla persona son el mismo valor en tu esquema
+    // Insertar los datos en la tabla empleado
     const [empleadoResult] = await connection.query(
       'INSERT INTO empleado (id, nombre, email, telefono) VALUES (?, ?, ?, ?)',
       [id, nombre_empleado, email_empleado, telefono_empleado]
     );
 
     const id_empleado_generado = empleadoResult.insertId;
-    
-    // 2. Insertar en la tabla `persona`
-    // El 'usuario' de la tabla persona es el mismo 'usuario' del login
+
+    //Insertar datos en la tabla persona
     const [personaResult] = await connection.query(
       'INSERT INTO persona (id, usuario, nombre, correo_electronico) VALUES (?, ?, ?, ?)',
       [id, usuario, nombre_empleado, email_empleado] // Usamos id_empleado como id de persona
     );
 
-    // 3. Insertar en la tabla `usuario`
+    // Insertar datos en la tabla usuario
+
+    const hashPassword = await bcrypt.hash(contrasena, 10)
+
     const [usuarioResult] = await connection.query(
       'INSERT INTO usuario (usuario, contraseña, rol) VALUES (?, ?, ?)',
-      [usuario, contrasena, rol]
+      [usuario, hashPassword, rol]
     );
-    
 
     await connection.commit(); // Confirmar la transacción
 
@@ -94,18 +95,31 @@ export const createUsuario = async (req, res) => {
       await connection.rollback(); // Revertir la transacción en caso de error
     }
     console.error('Error al crear empleado, persona y usuario:', err);
-    // Verificar si el error es debido a una clave duplicada (usuario ya existente)
-    if (err.code === 'ER_DUP_ENTRY') {
-      if (err.sqlMessage.includes('usuario')) {
-        return res.status(409).json({
-          message: 'El nombre de usuario ya existe. Por favor, elige otro.'
-        });
-      } else if (err.sqlMessage.includes('id_empleado')) {
-        return res.status(409).json({
-          message: 'El ID de empleado ya existe. Por favor, elige otro.'
-        });
-      }
+
+    // Verificación usuario ya existente
+    const [usuarios] = await connection.query(
+      'SELECT * FROM usuario WHERE usuario = ?',
+      [usuario]
+    );
+
+    if (usuarios.length > 0) {
+      return res.status(409).json({
+        message: 'El nombre de usuario ya existe, por favor elige otro.'
+      });
     }
+
+    // Verificación id ya existente
+    const [dni] = await connection.query(
+      'SELECT * FROM persona WHERE id = ?',
+      [id]
+    );
+
+    if (dni.length > 0) {
+      return res.status(409).json({
+        message: 'El número de documento que ingresaste ya existe'
+      });
+    }
+
     res.status(500).json({
       message: 'Error interno del servidor al crear el usuario. Por favor, verifica los datos proporcionados.'
     });
