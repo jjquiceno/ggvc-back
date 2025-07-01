@@ -130,6 +130,56 @@ export const createUsuario = async (req, res) => {
   }
 };
 
+export const loginUsuario = async (req, res) => {
+  const {
+    usuario,
+    contrasena
+  } = req.body;
+
+  // Validación básica de campos requeridos
+  if (!usuario || !contrasena) {
+    return res.status(400).json({
+      message: 'Faltan campos requeridos para iniciar sesión.'
+    });
+  }
+
+  try {
+    // Obtener el usuario de la base de datos
+    const [rows] = await pool.query('SELECT * FROM usuario WHERE usuario = ?', [usuario]);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: 'Usuario no encontrado'
+      });
+    }
+
+    const user = rows[0];
+
+    // Verificar la contraseña
+    const isPasswordValid = await bcrypt.compare(contrasena, user.contraseña);
+    
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        message: 'Contraseña incorrecta'
+      });
+    }
+
+    // Si todo es correcto, devolver los detalles del usuario (sin la contraseña)
+    const {
+      contraseña,
+      ...userWithoutPassword
+    } = user;
+
+    res.json(userWithoutPassword);
+
+  } catch (err) {
+    console.error('Error al iniciar sesión:', err);
+    res.status(500).json({
+      message: 'Error interno del servidor'
+    });
+  }
+};
+
 // Actualizar un registro de usuario
 export const updateUser = async (req, res) => {
   const {
