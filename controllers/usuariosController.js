@@ -1,5 +1,7 @@
 import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
+import {SALT_ROUNDS, SECRET_JWT_KEY } from '../config/config.js';
+import jwt from 'jsonwebtoken';
 
 // Obtener todos los registros de usuario
 export const getAllUsuario = async (req, res) => {
@@ -38,13 +40,13 @@ export const getUsuario = async (req, res) => {
 // Crear un nuevo registro de usuario (incluyendo empleado y persona)
 export const createUsuario = async (req, res) => {
   const {
-    id, // Nuevo campo: id para la tabla persona
-    nombre_empleado, // Nuevo campo: nombre para la tabla empleado y persona
-    email_empleado, // Nuevo campo: email para la tabla empleado
-    telefono_empleado, // Nuevo campo: telefono para la tabla empleado
-    usuario, // Campo existente: usuario para la tabla persona y usuario
-    contrasena, // Campo existente: contraseña para la tabla usuario
-    rol // Campo existente: rol para la tabla usuario
+    id, // id para la tabla persona
+    nombre_empleado, // Nombre para la tabla empleado y persona
+    email_empleado, // Email para la tabla empleado
+    telefono_empleado, // Telefono para la tabla empleado
+    usuario, // Usuario para la tabla persona y usuario
+    contrasena, // contraseña para la tabla usuario
+    rol // rol para la tabla usuario
   } = req.body;
 
   // Validación básica de campos requeridos
@@ -75,7 +77,7 @@ export const createUsuario = async (req, res) => {
 
     // Insertar datos en la tabla usuario
 
-    const hashPassword = await bcrypt.hash(contrasena, 10)
+    const hashPassword = await bcrypt.hash(contrasena, SALT_ROUNDS); // Hashear la contraseña
 
     const [usuarioResult] = await connection.query(
       'INSERT INTO usuario (usuario, contraseña, rol) VALUES (?, ?, ?)',
@@ -146,6 +148,7 @@ export const loginUsuario = async (req, res) => {
   try {
     // Obtener el usuario de la base de datos
     const [rows] = await pool.query('SELECT * FROM usuario WHERE usuario = ?', [usuario]);
+
     
     if (rows.length === 0) {
       return res.status(404).json({
@@ -164,6 +167,20 @@ export const loginUsuario = async (req, res) => {
       });
     }
 
+    // Generar un token JWT
+    const token = jwt.sign(
+      { usuario: user.usuario },
+      SECRET_JWT_KEY, // Clave secreta para firmar el token
+      { expiresIn: '1d' } // 1 día de duración
+    );
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      // secure: process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https y solo las envia en producción
+      sameSite: 'strict', // La cookie solo se envía en solicitudes del mismo sitio
+      maxAge: 24 * 60 * 60 * 1000 // 1 día
+    });
+
     // Si todo es correcto, devolver los detalles del usuario (sin la contraseña)
     const {
       contraseña,
@@ -177,6 +194,20 @@ export const loginUsuario = async (req, res) => {
     res.status(500).json({
       message: 'Error interno del servidor'
     });
+  }
+};
+
+export const verificarToken = (req, res, next) => {
+  const token = req.cookies.token;
+
+  if (!token) return res.status(401).json({ message: 'No autorizado.' });
+
+  try {
+    const datos = jwt.verify(token, SECRET_JWT_KEY);
+    req.usuario = datos; // Guardar los datos del usuario en la solicitud
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: 'Token inválido.' });
   }
 };
 

@@ -1,19 +1,25 @@
 import express from 'express';
 import pool from './config/db.js'; // Importa el pool de conexiones
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
-import ganadoRoutes from './routes/ganadoRoutes.js'; // Importa las rutas de ganado
-import empleadoRoutes from './routes/empleadoRoutes.js'; // Importa las rutas de empleado
-import usuarioRoutes from './routes/usuarioRoutes.js'; // Importa las rutas de usuario
+import ganadoRoutes from './routes/ganadoRoutes.js'; 
+import empleadoRoutes from './routes/empleadoRoutes.js';
+import usuarioRoutes from './routes/usuarioRoutes.js'; 
 import personasRoutes from './routes/personasRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', // Frontend
+  credentials: true // Para enviar cookies
+}));
 
 // Middleware para parsear JSON en las solicitudes
 app.use(express.json());
+
+app.use(cookieParser());
 
 // Ruta de prueba
 app.get('/', (req, res) => {
