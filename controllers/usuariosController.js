@@ -40,17 +40,17 @@ export const getUsuario = async (req, res) => {
 // Crear un nuevo registro de usuario (incluyendo empleado y persona)
 export const createUsuario = async (req, res) => {
   const {
-    id, // id para la tabla persona
-    nombre_empleado, // Nombre para la tabla empleado y persona
+    dni, // dni de la tabla usuario
+    nombre_empleado, // Nombre para la tabla empleado y usuario
     email_empleado, // Email para la tabla empleado
     telefono_empleado, // Telefono para la tabla empleado
-    usuario, // Usuario para la tabla persona y usuario
+    usuario, // Usuario para la tabla usuario
     contrasena, // contraseña para la tabla usuario
     rol // rol para la tabla usuario
   } = req.body;
 
   // Validación básica de campos requeridos
-  if (!id || !nombre_empleado || !email_empleado || !telefono_empleado || !usuario || !contrasena || !rol) {
+  if (!usuario || !dni || !nombre_empleado || !email_empleado || !telefono_empleado || !contrasena || !rol) {
     return res.status(400).json({
       message: 'Faltan campos requeridos para crear el empleado, la persona y el usuario.'
     });
@@ -63,31 +63,26 @@ export const createUsuario = async (req, res) => {
 
     // Insertar los datos en la tabla empleado
     const [empleadoResult] = await connection.query(
-      'INSERT INTO empleado (id, nombre, email, telefono) VALUES (?, ?, ?, ?)',
-      [id, nombre_empleado, email_empleado, telefono_empleado]
+      'INSERT INTO empleado (dni, nombre, email, telefono) VALUES (?, ?, ?, ?)',
+      [dni, nombre_empleado, email_empleado, telefono_empleado]
     );
 
     const id_empleado_generado = empleadoResult.insertId;
-
-    //Insertar datos en la tabla persona
-    const [personaResult] = await connection.query(
-      'INSERT INTO persona (id, usuario, nombre, correo_electronico) VALUES (?, ?, ?, ?)',
-      [id, usuario, nombre_empleado, email_empleado] // Usamos id_empleado como id de persona
-    );
+  
 
     // Insertar datos en la tabla usuario
 
     const hashPassword = await bcrypt.hash(contrasena, SALT_ROUNDS); // Hashear la contraseña
 
     const [usuarioResult] = await connection.query(
-      'INSERT INTO usuario (usuario, contraseña, rol) VALUES (?, ?, ?)',
-      [usuario, hashPassword, rol]
+      'INSERT INTO usuario (usuario, dni, nombre, contraseña, rol) VALUES (?, ?, ?, ?, ?)',
+      [usuario, dni, nombre_empleado, hashPassword, rol]
     );
 
     await connection.commit(); // Confirmar la transacción
 
     res.status(201).json({
-      message: 'Empleado, persona y usuario creados exitosamente',
+      message: 'Empleado y usuario creados exitosamente',
       empleadoId: id_empleado_generado,
       usuarioCreado: usuario
     });
@@ -111,12 +106,12 @@ export const createUsuario = async (req, res) => {
     }
 
     // Verificación id ya existente
-    const [dni] = await connection.query(
-      'SELECT * FROM persona WHERE id = ?',
-      [id]
+    const [doc] = await connection.query(
+      'SELECT * FROM usuario WHERE dni = ?',
+      [dni]
     );
 
-    if (dni.length > 0) {
+    if (doc.length > 0) {
       return res.status(409).json({
         message: 'El número de documento que ingresaste ya existe'
       });
@@ -174,12 +169,6 @@ export const loginUsuario = async (req, res) => {
       { expiresIn: '1d' } // 1 día de duración
     );
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      // secure: process.env.NODE_ENV === 'production', // La cookie solo se puede acceder en https y solo las envia en producción
-      sameSite: 'strict', // La cookie solo se envía en solicitudes del mismo sitio
-      maxAge: 24 * 60 * 60 * 1000 // 1 día
-    });
 
     // Si todo es correcto, devolver los detalles del usuario (sin la contraseña)
     const {
@@ -187,7 +176,10 @@ export const loginUsuario = async (req, res) => {
       ...userWithoutPassword
     } = user;
 
-    res.json(userWithoutPassword);
+    res.json({
+      user: userWithoutPassword,
+      token: token
+    });
 
   } catch (err) {
     console.error('Error al iniciar sesión:', err);
@@ -198,18 +190,19 @@ export const loginUsuario = async (req, res) => {
 };
 
 export const verificarToken = (req, res, next) => {
-  const token = req.cookies.token;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // "Bearer TOKEN"
 
-  if (!token) return res.status(401).json({ message: 'No autorizado.' });
+  if (!token) return res.status(401).json({ message: 'Token requerido' });
 
-  try {
-    const datos = jwt.verify(token, SECRET_JWT_KEY);
-    req.usuario = datos; // Guardar los datos del usuario en la solicitud
+  jwt.verify(token, 'secreto_super_seguro', (err, user) => {
+    if (err) return res.status(403).json({ message: 'Token inválido' });
+
+    req.user = user;
     next();
-  } catch (err) {
-    return res.status(403).json({ message: 'Token inválido.' });
-  }
+  });
 };
+
 
 // Actualizar un registro de usuario
 export const updateUser = async (req, res) => {

@@ -19,7 +19,7 @@ export const getPersona = async (req, res) => {
     id
   } = req.params;
   try {
-    const [rows] = await pool.query('SELECT * FROM persona WHERE id = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM persona WHERE usuario = ?', [id]);
     if (rows.length === 0) {
       return res.status(404).json({
         message: 'Persona no encontrada'

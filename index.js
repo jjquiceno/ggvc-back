@@ -11,10 +11,7 @@ import personasRoutes from './routes/personasRoutes.js';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({
-  origin: 'http://localhost:5173', // Frontend
-  credentials: true // Para enviar cookies
-}));
+app.use(cors());
 
 // Middleware para parsear JSON en las solicitudes
 app.use(express.json());
