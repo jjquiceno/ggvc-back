@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import ganadoRoutes from './routes/ganadoRoutes.js'; 
 import empleadoRoutes from './routes/empleadoRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js'; 
-import personasRoutes from './routes/personasRoutes.js';
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,8 +31,6 @@ app.use('/api/empleado', empleadoRoutes);
 
 // Usar las rutas de usuario
 app.use('/api/usuario', usuarioRoutes);
-
-app.use('/api/personas', personasRoutes);
 
 // Manejo de errores para rutas no encontradas
 app.use((req, res, next) => {

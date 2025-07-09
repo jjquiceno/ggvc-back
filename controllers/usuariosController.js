@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 // Obtener todos los registros de usuario
 export const getAllUsuario = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM usuario');
+    const [rows] = await pool.query('SELECT * FROM usuarios');
     res.json(rows);
   } catch (err) {
     console.error('Error al obtener usuarios:', err);
@@ -22,7 +22,7 @@ export const getUsuario = async (req, res) => {
     user
   } = req.params;
   try {
-    const [rows] = await pool.query('SELECT * FROM usuario WHERE usuario = ?', [user]);
+    const [rows] = await pool.query('SELECT * FROM usuarios WHERE usuario = ?', [user]);
     if (rows.length === 0) {
       return res.status(404).json({
         message: 'Usuario no encontrado'
@@ -40,7 +40,7 @@ export const getUsuario = async (req, res) => {
 // Crear un nuevo registro de usuario (incluyendo empleado y persona)
 export const createUsuario = async (req, res) => {
   const {
-    dni, // dni de la tabla usuario
+    dni, // dni de la tabla usuario y empleado
     nombre_empleado, // Nombre para la tabla empleado y usuario
     email_empleado, // Email para la tabla empleado
     telefono_empleado, // Telefono para la tabla empleado
@@ -63,8 +63,8 @@ export const createUsuario = async (req, res) => {
 
     // Insertar los datos en la tabla empleado
     const [empleadoResult] = await connection.query(
-      'INSERT INTO empleado (dni, nombre, email, telefono) VALUES (?, ?, ?, ?)',
-      [dni, nombre_empleado, email_empleado, telefono_empleado]
+      'INSERT INTO empleado (usuario, dni, nombre, email, telefono) VALUES (?, ?, ?, ?, ?)',
+      [usuario, dni, nombre_empleado, email_empleado, telefono_empleado]
     );
 
     const id_empleado_generado = empleadoResult.insertId;
@@ -75,7 +75,7 @@ export const createUsuario = async (req, res) => {
     const hashPassword = await bcrypt.hash(contrasena, SALT_ROUNDS); // Hashear la contraseña
 
     const [usuarioResult] = await connection.query(
-      'INSERT INTO usuario (usuario, dni, nombre, contraseña, rol) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO usuarios (usuario, dni, nombre, contraseña, rol) VALUES (?, ?, ?, ?, ?)',
       [usuario, dni, nombre_empleado, hashPassword, rol]
     );
 
@@ -91,7 +91,7 @@ export const createUsuario = async (req, res) => {
     if (connection) {
       await connection.rollback(); // Revertir la transacción en caso de error
     }
-    console.error('Error al crear empleado, persona y usuario:', err);
+    console.error('Error al crear empleado y usuario:', err);
 
     // Verificación usuario ya existente
     const [usuarios] = await connection.query(
@@ -142,7 +142,7 @@ export const loginUsuario = async (req, res) => {
 
   try {
     // Obtener el usuario de la base de datos
-    const [rows] = await pool.query('SELECT * FROM usuario WHERE usuario = ?', [usuario]);
+    const [rows] = await pool.query('SELECT * FROM usuarios WHERE usuario = ?', [usuario]);
 
     
     if (rows.length === 0) {
@@ -164,7 +164,7 @@ export const loginUsuario = async (req, res) => {
 
     // Generar un token JWT
     const token = jwt.sign(
-      { usuario: user.usuario },
+      { usuario: user.usuario, nombre: user.nombre},
       SECRET_JWT_KEY, // Clave secreta para firmar el token
       { expiresIn: '1d' } // 1 día de duración
     );
@@ -195,10 +195,9 @@ export const verificarToken = (req, res, next) => {
 
   if (!token) return res.status(401).json({ message: 'Token requerido' });
 
-  jwt.verify(token, 'secreto_super_seguro', (err, user) => {
+  jwt.verify(token, SECRET_JWT_KEY, (err, user) => {
     if (err) return res.status(403).json({ message: 'Token inválido' });
-
-    req.user = user;
+    req.usuario = user;
     next();
   });
 };
@@ -237,7 +236,7 @@ export const updateUser = async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      `UPDATE usuario SET ${updateFields.join(', ')} WHERE usuario = ?`,
+      `UPDATE usuarios SET ${updateFields.join(', ')} WHERE usuario = ?`,
       queryParams
     );
     if (result.affectedRows === 0) {
@@ -257,7 +256,7 @@ export const updateUser = async (req, res) => {
 };
 
 
-// Eliminar un registro de usuario (¡Ojo! Esto también debería manejar la eliminación en cascada si es necesario)
+// Eliminar un registro de usuario (solo en la tabla usuarios)
 export const deleteUser = async (req, res) => {
   const {
     user
@@ -268,18 +267,9 @@ export const deleteUser = async (req, res) => {
     connection = await pool.getConnection();
     await connection.beginTransaction();
 
-    // Obtener el id de la persona asociado al usuario que se va a eliminar
-    const [userPersona] = await connection.query('SELECT id FROM persona WHERE usuario = ?', [user]);
-    if (userPersona.length === 0) {
-      await connection.rollback();
-      return res.status(404).json({
-        message: 'Usuario o persona asociada no encontrada para eliminar'
-      });
-    }
-    const personaId = userPersona[0].id;
 
     // 1. Eliminar el usuario
-    const [resultUsuario] = await connection.query('DELETE FROM usuario WHERE usuario = ?', [user]);
+    const [resultUsuario] = await connection.query('DELETE FROM usuarios WHERE usuario = ?', [user]);
     if (resultUsuario.affectedRows === 0) {
       await connection.rollback();
       return res.status(404).json({
@@ -287,17 +277,8 @@ export const deleteUser = async (req, res) => {
       });
     }
 
-    // 2. Eliminar la persona asociada
-    const [resultPersona] = await connection.query('DELETE FROM persona WHERE id = ?', [personaId]);
-    if (resultPersona.affectedRows === 0) {
-      await connection.rollback();
-      return res.status(404).json({
-        message: 'Persona asociada no encontrada para eliminar'
-      });
-    }
-
-    // 3. Eliminar el empleado asociado (asumiendo que id_empleado es el mismo que id de persona)
-    const [resultEmpleado] = await connection.query('DELETE FROM empleado WHERE id_empleado = ?', [personaId]);
+    // 3. Eliminar el empleado asociado
+    const [resultEmpleado] = await connection.query('DELETE FROM empleado WHERE usuario = ?', [user]);
     if (resultEmpleado.affectedRows === 0) {
       await connection.rollback();
       return res.status(404).json({
@@ -308,7 +289,7 @@ export const deleteUser = async (req, res) => {
     await connection.commit();
 
     res.json({
-      message: 'Usuario, persona y empleado eliminados exitosamente'
+      message: 'Usuario y empleado eliminados exitosamente'
     });
 
   } catch (err) {
