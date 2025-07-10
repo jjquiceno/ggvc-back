@@ -37,21 +37,20 @@ export const getEmpleado = async (req, res) => {
 // Crear un nuevo registro de empleado
 export const createEmpleado = async (req, res) => {
   const {
-    id,
     nombre,
     email,
     telefono
   } = req.body;
 
-  if (!id || !nombre || !email || !telefono) {
+  if (!nombre || !email || !telefono) {
     return res.status(400).json({
-      message: 'Faltan campos requeridos para empleado (, id, nombre, email, telefono)'
+      message: 'Faltan campos requeridos para empleado (nombre, email, telefono)'
     });
   }
   try {
     const [result] = await pool.query(
-      'INSERT INTO empleado (id, nombre, email, telefono) VALUES (?, ?, ?, ?)',
-      [id, nombre, email, telefono]
+      'INSERT INTO empleado (nombre, email, telefono) VALUES (?, ?, ?)',
+      [nombre, email, telefono]
     );
     res.status(201).json({
       message: 'Empleado creado exitosamente',
@@ -71,15 +70,14 @@ export const updateEmpleado = async (req, res) => {
     id_empleado
   } = req.params;
   const {
-    id,
     nombre,
     email,
     telefono
   } = req.body;
   try {
     const [result] = await pool.query(
-      'UPDATE empleado SET id = ?, nombre = ?, email = ?, telefono = ? WHERE id_empleado = ?',
-      [id, nombre, email, telefono, id_empleado]
+      'UPDATE empleado SET nombre = ?, email = ?, telefono = ? WHERE id_empleado = ?',
+      [nombre, email, telefono, id_empleado]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({
