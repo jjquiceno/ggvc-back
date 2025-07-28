@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 09, 2025 at 09:23 PM
+-- Generation Time: Jul 28, 2025 at 05:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -36,6 +36,13 @@ CREATE TABLE `cria` (
   `color` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `cria`
+--
+
+INSERT INTO `cria` (`id_cria`, `id_parto`, `fecha_de_nacimiento`, `sexo`, `peso_al_nacer`, `color`) VALUES
+(2, 17, '2025-06-28', 'Macho', 29.80, 'Negro sólido');
+
 -- --------------------------------------------------------
 
 --
@@ -43,12 +50,22 @@ CREATE TABLE `cria` (
 --
 
 CREATE TABLE `defuncion_ganado` (
+  `id_defuncion` int(11) NOT NULL,
   `nombre` varchar(50) NOT NULL,
   `id_ganado` int(11) DEFAULT NULL,
   `genero` enum('Macho','Hembra') DEFAULT NULL,
   `fecha` date DEFAULT NULL,
   `lugar_de_defuncion` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `defuncion_ganado`
+--
+
+INSERT INTO `defuncion_ganado` (`id_defuncion`, `nombre`, `id_ganado`, `genero`, `fecha`, `lugar_de_defuncion`) VALUES
+(2, 'Vaca Linda', 1, 'Hembra', '2025-07-14', 'Potrero Norte'),
+(3, 'Vaca Linda', 1, 'Hembra', '2025-07-14', 'Potrero Norte'),
+(5, 'Novillo 22', 1, 'Macho', '2025-05-12', 'Clínica veterinaria rural');
 
 -- --------------------------------------------------------
 
@@ -70,7 +87,9 @@ CREATE TABLE `empleado` (
 --
 
 INSERT INTO `empleado` (`id_empleado`, `usuario`, `dni`, `nombre`, `email`, `telefono`) VALUES
-(3, 'isa123', 1000, 'isabella', 'isa@g.c', '4040404');
+(3, 'isa123', 1000, 'isabella', 'isa@g.c', '4040404'),
+(5, 'user', 123456, 'UserLogin', 'user@gmail.com', '78549621'),
+(6, 'Edwin', 1033187160, 'Edison', '10331@gmail.com', '1033187');
 
 -- --------------------------------------------------------
 
@@ -79,7 +98,7 @@ INSERT INTO `empleado` (`id_empleado`, `usuario`, `dni`, `nombre`, `email`, `tel
 --
 
 CREATE TABLE `enfermedades` (
-  `id_diagnóstico` int(11) NOT NULL,
+  `id_diagnostico` int(11) NOT NULL,
   `id_ganado` int(11) DEFAULT NULL,
   `enfermedad` varchar(100) DEFAULT NULL,
   `fecha_diagnostico` date DEFAULT NULL,
@@ -100,17 +119,23 @@ CREATE TABLE `ganado` (
   `raza` varchar(50) DEFAULT NULL,
   `sexo` enum('Macho','Hembra') DEFAULT NULL,
   `fecha_nacimiento` date DEFAULT NULL,
-  `edad` int(11) DEFAULT NULL,
   `origen` varchar(100) DEFAULT NULL,
-  `propósito` enum('Leche','Carne','Reproducción') DEFAULT NULL
+  `proposito` enum('Leche','Carne','Reproducción') DEFAULT NULL,
+  `estado` enum('Amamantamiento','Prenez','Enfermo','Sano') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ganado`
 --
 
-INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`, `edad`, `origen`, `propósito`) VALUES
-(1, 'Luna', 'Holstein', 'Hembra', '2022-03-15', 2, 'Finca Los Álamos', 'Leche');
+INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`, `origen`, `proposito`, `estado`) VALUES
+(1, 'Lunita', 'Holstein', 'Hembra', '2022-03-15', 'Finca Los Álamos', 'Carne', 'Amamantamiento'),
+(4, 'Princesa', 'Braham', 'Hembra', NULL, 'Compra', NULL, 'Amamantamiento'),
+(5, 'ss', 'ss', 'Macho', NULL, 'sss', NULL, 'Amamantamiento'),
+(6, 'd', 'd', 'Hembra', NULL, 'd', NULL, 'Amamantamiento'),
+(7, 'fff', 'fff', 'Macho', '2025-07-03', 'fff', 'Reproducción', 'Sano'),
+(8, 'Thor', 'Sebu', 'Macho', '2019-06-13', 'Inseminacion', 'Reproducción', 'Enfermo'),
+(9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez');
 
 -- --------------------------------------------------------
 
@@ -119,7 +144,8 @@ INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`,
 --
 
 CREATE TABLE `mano_de_obra` (
-  `fecha` int(11) NOT NULL,
+  `id_obra` int(11) NOT NULL,
+  `fecha` date NOT NULL,
   `id_empleado` int(11) DEFAULT NULL,
   `tipo` enum('Contratada','Prestación de servicios','Otro') DEFAULT NULL,
   `actividad` varchar(100) DEFAULT NULL,
@@ -199,6 +225,25 @@ CREATE TABLE `plan_sanitario` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `potreros`
+--
+
+CREATE TABLE `potreros` (
+  `id_potrero` int(11) NOT NULL,
+  `nombre_potrero` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `potreros`
+--
+
+INSERT INTO `potreros` (`id_potrero`, `nombre_potrero`) VALUES
+(2, 'Potrero amarillo'),
+(3, 'Laguito');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `preñez`
 --
 
@@ -240,14 +285,21 @@ CREATE TABLE `req_BPG` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `ubicación`
+-- Table structure for table `ubicacion`
 --
 
-CREATE TABLE `ubicación` (
-  `fecha_ubicación` date NOT NULL,
-  `ubicación` varchar(100) DEFAULT NULL,
+CREATE TABLE `ubicacion` (
+  `id_ubicacion` int(11) NOT NULL,
+  `id_potrero` int(100) DEFAULT NULL,
   `id_ganado` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `ubicacion`
+--
+
+INSERT INTO `ubicacion` (`id_ubicacion`, `id_potrero`, `id_ganado`) VALUES
+(2, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -268,7 +320,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`usuario`, `contraseña`, `rol`, `dni`, `nombre`) VALUES
-('isa123', 'newPassword', 'admin', 1000, 'isabella');
+('Edwin', '$2b$10$orxrhxGV1yH7u3TBD4tM6efjb4FLzz7QU5fi6zRiNyImfrZ8nKrSq', 'admin', 1033187160, 'Edison'),
+('isa123', 'newPassword', 'admin', 1000, 'isabella'),
+('user', '$2b$10$EcLc4VJM5.BCwrcApw8ryeE6.oQiY6QK.t3Ag9Mtf8owFK3a03yRS', 'empleado', 123456, 'UserLogin');
 
 --
 -- Indexes for dumped tables
@@ -284,7 +338,7 @@ ALTER TABLE `cria`
 -- Indexes for table `defuncion_ganado`
 --
 ALTER TABLE `defuncion_ganado`
-  ADD PRIMARY KEY (`nombre`),
+  ADD PRIMARY KEY (`id_defuncion`),
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
@@ -298,7 +352,7 @@ ALTER TABLE `empleado`
 -- Indexes for table `enfermedades`
 --
 ALTER TABLE `enfermedades`
-  ADD PRIMARY KEY (`id_diagnóstico`),
+  ADD PRIMARY KEY (`id_diagnostico`) USING BTREE,
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
@@ -311,7 +365,7 @@ ALTER TABLE `ganado`
 -- Indexes for table `mano_de_obra`
 --
 ALTER TABLE `mano_de_obra`
-  ADD PRIMARY KEY (`fecha`),
+  ADD PRIMARY KEY (`id_obra`),
   ADD KEY `id_empleado` (`id_empleado`);
 
 --
@@ -349,6 +403,12 @@ ALTER TABLE `plan_sanitario`
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
+-- Indexes for table `potreros`
+--
+ALTER TABLE `potreros`
+  ADD PRIMARY KEY (`id_potrero`);
+
+--
 -- Indexes for table `preñez`
 --
 ALTER TABLE `preñez`
@@ -370,11 +430,12 @@ ALTER TABLE `req_BPG`
   ADD KEY `Id_empleado` (`Id_empleado`);
 
 --
--- Indexes for table `ubicación`
+-- Indexes for table `ubicacion`
 --
-ALTER TABLE `ubicación`
-  ADD PRIMARY KEY (`fecha_ubicación`),
-  ADD KEY `id_ganado` (`id_ganado`);
+ALTER TABLE `ubicacion`
+  ADD PRIMARY KEY (`id_ubicacion`),
+  ADD KEY `id_ganado` (`id_ganado`),
+  ADD KEY `id_potrero` (`id_potrero`);
 
 --
 -- Indexes for table `usuarios`
@@ -387,16 +448,52 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT for table `cria`
+--
+ALTER TABLE `cria`
+  MODIFY `id_cria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `defuncion_ganado`
+--
+ALTER TABLE `defuncion_ganado`
+  MODIFY `id_defuncion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT for table `empleado`
 --
 ALTER TABLE `empleado`
-  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `enfermedades`
+--
+ALTER TABLE `enfermedades`
+  MODIFY `id_diagnostico` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `ganado`
 --
 ALTER TABLE `ganado`
-  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `mano_de_obra`
+--
+ALTER TABLE `mano_de_obra`
+  MODIFY `id_obra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `potreros`
+--
+ALTER TABLE `potreros`
+  MODIFY `id_potrero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `ubicacion`
+--
+ALTER TABLE `ubicacion`
+  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -463,10 +560,11 @@ ALTER TABLE `req_BPG`
   ADD CONSTRAINT `req_BPG_ibfk_1` FOREIGN KEY (`Id_empleado`) REFERENCES `empleado` (`id_empleado`);
 
 --
--- Constraints for table `ubicación`
+-- Constraints for table `ubicacion`
 --
-ALTER TABLE `ubicación`
-  ADD CONSTRAINT `ubicación_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`);
+ALTER TABLE `ubicacion`
+  ADD CONSTRAINT `ubicacion_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`),
+  ADD CONSTRAINT `ubicacion_ibfk_2` FOREIGN KEY (`id_potrero`) REFERENCES `potreros` (`id_potrero`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
