@@ -41,14 +41,14 @@ export const createGanado = async (req, res) => {
     raza,
     sexo,
     fecha_nacimiento,
-    edad,
     origen,
-    propósito
+    proposito,
+    estado
   } = req.body;
   try {
     const [result] = await pool.query(
-      'INSERT INTO ganado (nombre, raza, sexo, fecha_nacimiento, edad, origen, propósito) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [nombre, raza, sexo, fecha_nacimiento, edad, origen, propósito]
+      'INSERT INTO ganado (nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado]
     );
     res.status(201).json({
       message: 'Ganado creado exitosamente',
