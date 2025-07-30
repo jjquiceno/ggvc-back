@@ -12,6 +12,9 @@ import enfermedadesRoutes from './routes/enfermedadesRoutes.js';
 import manoDeObraRoutes from './routes/manoDeObraRoutes.js';
 import potrerosRoutes from './routes/potrerosRoutes.js';
 import ubicacionRoutes from './routes/ubicacionRoutes.js';
+import sanitarioRoutes from './routes/sanitarioRoutes.js';
+import palpacionesRoutes from './routes/palpacionesRoutes.js';
+import descendenciasRoutes from './routes/descendenciasRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -54,6 +57,16 @@ app.use('/api/potreros', potrerosRoutes);
 
 // Usar las rutas de ubicacion
 app.use('/api/ubicacion', ubicacionRoutes);
+
+// Usar las rutas de plan_sanitario
+app.use('/api/plan_sanitario', sanitarioRoutes);
+
+// Usar las rutas de palpaciones
+app.use('/api/palpaciones', palpacionesRoutes);
+
+// Usar las rutas de descendencias
+app.use('/api/descendencias', descendenciasRoutes);
+
 
 // Manejo de errores para rutas no encontradas
 app.use((req, res, next) => {

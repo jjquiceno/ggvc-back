@@ -43,12 +43,13 @@ export const createGanado = async (req, res) => {
     fecha_nacimiento,
     origen,
     proposito,
-    estado
+    estado,
+    descripcion
   } = req.body;
   try {
     const [result] = await pool.query(
-      'INSERT INTO ganado (nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado]
+      'INSERT INTO ganado (nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado, descripcion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado, descripcion]
     );
     res.status(201).json({
       message: 'Ganado creado exitosamente',
@@ -72,14 +73,15 @@ export const updateGanado = async (req, res) => {
     raza,
     sexo,
     fecha_nacimiento,
-    edad,
     origen,
-    propósito
+    proposito,
+    estado,
+    descripcion
   } = req.body;
   try {
     const [result] = await pool.query(
-      'UPDATE ganado SET nombre = ?, raza = ?, sexo = ?, fecha_nacimiento = ?, edad = ?, origen = ?, propósito = ? WHERE id_ganado = ?',
-      [nombre, raza, sexo, fecha_nacimiento, edad, origen, propósito, id]
+      'UPDATE ganado SET nombre = ?, raza = ?, sexo = ?, fecha_nacimiento = ?, origen = ?, proposito = ?, estado = ?, descripcion = ? WHERE id_ganado = ?',
+      [nombre, raza, sexo, fecha_nacimiento, origen, proposito, estado, descripcion, id]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({
