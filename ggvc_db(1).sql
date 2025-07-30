@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 28, 2025 at 05:12 PM
+-- Generation Time: Jul 30, 2025 at 05:26 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -70,6 +70,26 @@ INSERT INTO `defuncion_ganado` (`id_defuncion`, `nombre`, `id_ganado`, `genero`,
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `descendencias`
+--
+
+CREATE TABLE `descendencias` (
+  `id_descendencia` int(11) NOT NULL,
+  `id_ganado` int(11) NOT NULL,
+  `id_madre` int(11) DEFAULT NULL,
+  `id_padre` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `descendencias`
+--
+
+INSERT INTO `descendencias` (`id_descendencia`, `id_ganado`, `id_madre`, `id_padre`) VALUES
+(2, 1, 4, 8);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `empleado`
 --
 
@@ -121,21 +141,22 @@ CREATE TABLE `ganado` (
   `fecha_nacimiento` date DEFAULT NULL,
   `origen` varchar(100) DEFAULT NULL,
   `proposito` enum('Leche','Carne','Reproducción') DEFAULT NULL,
-  `estado` enum('Amamantamiento','Prenez','Enfermo','Sano') NOT NULL
+  `estado` enum('Amamantamiento','Prenez','Enfermo','Sano') NOT NULL,
+  `descripcion` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `ganado`
 --
 
-INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`, `origen`, `proposito`, `estado`) VALUES
-(1, 'Lunita', 'Holstein', 'Hembra', '2022-03-15', 'Finca Los Álamos', 'Carne', 'Amamantamiento'),
-(4, 'Princesa', 'Braham', 'Hembra', NULL, 'Compra', NULL, 'Amamantamiento'),
-(5, 'ss', 'ss', 'Macho', NULL, 'sss', NULL, 'Amamantamiento'),
-(6, 'd', 'd', 'Hembra', NULL, 'd', NULL, 'Amamantamiento'),
-(7, 'fff', 'fff', 'Macho', '2025-07-03', 'fff', 'Reproducción', 'Sano'),
-(8, 'Thor', 'Sebu', 'Macho', '2019-06-13', 'Inseminacion', 'Reproducción', 'Enfermo'),
-(9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez');
+INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`, `origen`, `proposito`, `estado`, `descripcion`) VALUES
+(1, 'Lunita', 'Holstein', 'Hembra', '2022-03-15', 'Finca Los Álamos', 'Carne', 'Sano', 'Animal tranquilo, buen rendimiento, tiene una mancha con forma de luna en la parte izquierda del lomo, es blanca y café'),
+(4, 'Princesa', 'Braham', 'Hembra', NULL, 'Compra', NULL, 'Amamantamiento', ''),
+(5, 'ss', 'ss', 'Macho', NULL, 'sss', NULL, 'Amamantamiento', ''),
+(6, 'd', 'd', 'Hembra', NULL, 'd', NULL, 'Amamantamiento', ''),
+(7, 'fff', 'fff', 'Macho', '2025-07-03', 'fff', 'Reproducción', 'Sano', ''),
+(8, 'Thor', 'Sebu', 'Macho', '2019-06-13', 'Inseminacion', 'Reproducción', 'Enfermo', ''),
+(9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez', '');
 
 -- --------------------------------------------------------
 
@@ -175,11 +196,24 @@ CREATE TABLE `nuticion` (
 --
 
 CREATE TABLE `palpaciones` (
+  `id_palpacion` int(11) NOT NULL,
   `fecha` date NOT NULL,
   `id_ganado` int(11) DEFAULT NULL,
   `hallazgo` text DEFAULT NULL,
-  `observaciones` text DEFAULT NULL
+  `observaciones` text DEFAULT NULL,
+  `condicion_corporal` enum('Mala','Regular','Buena','Muy_buena','Excelente') NOT NULL,
+  `palpador` varchar(100) NOT NULL,
+  `utero` varchar(200) NOT NULL,
+  `ovario_izq` varchar(200) NOT NULL,
+  `ovario_der` varchar(200) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `palpaciones`
+--
+
+INSERT INTO `palpaciones` (`id_palpacion`, `fecha`, `id_ganado`, `hallazgo`, `observaciones`, `condicion_corporal`, `palpador`, `utero`, `ovario_izq`, `ovario_der`) VALUES
+(2, '2025-07-29', 5, 'Preñez positiva', 'Se observó actividad uterina normal. Ganado tranquilo durante la evaluación.', 'Buena', 'Dra. Ana Gómez', 'Normal', 'Folículo presente', 'Cuerpo lúteo presente');
 
 -- --------------------------------------------------------
 
@@ -214,13 +248,21 @@ CREATE TABLE `peso` (
 --
 
 CREATE TABLE `plan_sanitario` (
-  `fecha_aplicacion` int(11) NOT NULL,
+  `id_sanidad` int(11) NOT NULL,
+  `fecha_aplicacion` date NOT NULL,
   `tipo_actividad` enum('Vacunación','Vitaminización','Desparacitación') DEFAULT NULL,
   `id_ganado` int(11) DEFAULT NULL,
-  `dosis` varchar(100) DEFAULT NULL,
-  `supervisor` decimal(10,2) DEFAULT NULL,
-  `observaciones` date DEFAULT NULL
+  `dosis` varchar(20) DEFAULT NULL,
+  `supervisor` varchar(100) DEFAULT NULL,
+  `observaciones` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `plan_sanitario`
+--
+
+INSERT INTO `plan_sanitario` (`id_sanidad`, `fecha_aplicacion`, `tipo_actividad`, `id_ganado`, `dosis`, `supervisor`, `observaciones`) VALUES
+(3, '2025-07-29', 'Vacunación', 4, '2 ml', 'Carlos Pérez', 'Aplicación de vacuna contra fiebre aftosa. Ganado tranquilo y sin reacciones.');
 
 -- --------------------------------------------------------
 
@@ -342,6 +384,15 @@ ALTER TABLE `defuncion_ganado`
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
+-- Indexes for table `descendencias`
+--
+ALTER TABLE `descendencias`
+  ADD PRIMARY KEY (`id_descendencia`),
+  ADD KEY `id_ganado` (`id_ganado`),
+  ADD KEY `id_madre` (`id_madre`),
+  ADD KEY `id_padre` (`id_padre`);
+
+--
 -- Indexes for table `empleado`
 --
 ALTER TABLE `empleado`
@@ -379,7 +430,7 @@ ALTER TABLE `nuticion`
 -- Indexes for table `palpaciones`
 --
 ALTER TABLE `palpaciones`
-  ADD PRIMARY KEY (`fecha`),
+  ADD PRIMARY KEY (`id_palpacion`),
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
@@ -399,7 +450,7 @@ ALTER TABLE `peso`
 -- Indexes for table `plan_sanitario`
 --
 ALTER TABLE `plan_sanitario`
-  ADD PRIMARY KEY (`fecha_aplicacion`),
+  ADD PRIMARY KEY (`id_sanidad`),
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
@@ -460,6 +511,12 @@ ALTER TABLE `defuncion_ganado`
   MODIFY `id_defuncion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `descendencias`
+--
+ALTER TABLE `descendencias`
+  MODIFY `id_descendencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `empleado`
 --
 ALTER TABLE `empleado`
@@ -484,6 +541,18 @@ ALTER TABLE `mano_de_obra`
   MODIFY `id_obra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `palpaciones`
+--
+ALTER TABLE `palpaciones`
+  MODIFY `id_palpacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `plan_sanitario`
+--
+ALTER TABLE `plan_sanitario`
+  MODIFY `id_sanidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `potreros`
 --
 ALTER TABLE `potreros`
@@ -504,6 +573,14 @@ ALTER TABLE `ubicacion`
 --
 ALTER TABLE `defuncion_ganado`
   ADD CONSTRAINT `defuncion_ganado_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`);
+
+--
+-- Constraints for table `descendencias`
+--
+ALTER TABLE `descendencias`
+  ADD CONSTRAINT `descendencias_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`) ON DELETE CASCADE,
+  ADD CONSTRAINT `descendencias_ibfk_2` FOREIGN KEY (`id_madre`) REFERENCES `ganado` (`id_ganado`) ON DELETE SET NULL,
+  ADD CONSTRAINT `descendencias_ibfk_3` FOREIGN KEY (`id_padre`) REFERENCES `ganado` (`id_ganado`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `enfermedades`
