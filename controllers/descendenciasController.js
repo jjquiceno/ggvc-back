@@ -60,6 +60,27 @@ export const getDescendenciasById = async (req, res) => {
   }
 };
 
+// Buscar descendencia por id_ganado
+export const getDescendenciaByGanado = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const [result] = await pool.query(
+      'SELECT * FROM descendencias WHERE id_ganado = ?',
+      [id]
+    );
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'Descendencia no encontrada' });
+    }
+
+    res.json(result[0]);
+  } catch (err) {
+    console.error('Error al obtener descendencia:', err);
+    res.status(500).json({ error: 'Error al obtener descendencia' });
+  }
+};
+
 // Crear un nuevo registro de descendencias
 export const createDescendencias = async (req, res) => {
   const { id_ganado, id_madre, id_padre } = req.body;
