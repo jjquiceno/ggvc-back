@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jul 30, 2025 at 05:26 PM
+-- Generation Time: Aug 07, 2025 at 12:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -85,7 +85,10 @@ CREATE TABLE `descendencias` (
 --
 
 INSERT INTO `descendencias` (`id_descendencia`, `id_ganado`, `id_madre`, `id_padre`) VALUES
-(2, 1, 4, 8);
+(2, 1, 4, 8),
+(3, 4, 4, 6),
+(4, 5, 7, NULL),
+(5, 10, 1, 8);
 
 -- --------------------------------------------------------
 
@@ -156,7 +159,8 @@ INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`,
 (6, 'd', 'd', 'Hembra', NULL, 'd', NULL, 'Amamantamiento', ''),
 (7, 'fff', 'fff', 'Macho', '2025-07-03', 'fff', 'Reproducción', 'Sano', ''),
 (8, 'Thor', 'Sebu', 'Macho', '2019-06-13', 'Inseminacion', 'Reproducción', 'Enfermo', ''),
-(9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez', '');
+(9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez', ''),
+(10, 'Pinto', 'Braham', 'Macho', '2018-05-22', 'Compra', 'Reproducción', 'Sano', 'Toro en buenas condiciones corporales para reproducción tiene una pinta blanca en la cabeza, el restoo es cafe');
 
 -- --------------------------------------------------------
 
@@ -341,7 +345,13 @@ CREATE TABLE `ubicacion` (
 --
 
 INSERT INTO `ubicacion` (`id_ubicacion`, `id_potrero`, `id_ganado`) VALUES
-(2, 2, 1);
+(2, 2, 1),
+(5, 2, 4),
+(6, 2, 4),
+(7, 3, 7),
+(8, 3, 7),
+(9, 3, 8),
+(10, 2, 10);
 
 -- --------------------------------------------------------
 
@@ -514,7 +524,7 @@ ALTER TABLE `defuncion_ganado`
 -- AUTO_INCREMENT for table `descendencias`
 --
 ALTER TABLE `descendencias`
-  MODIFY `id_descendencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_descendencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `empleado`
@@ -532,7 +542,7 @@ ALTER TABLE `enfermedades`
 -- AUTO_INCREMENT for table `ganado`
 --
 ALTER TABLE `ganado`
-  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `mano_de_obra`
@@ -562,7 +572,7 @@ ALTER TABLE `potreros`
 -- AUTO_INCREMENT for table `ubicacion`
 --
 ALTER TABLE `ubicacion`
-  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Constraints for dumped tables
