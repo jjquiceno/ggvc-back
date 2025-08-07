@@ -39,7 +39,7 @@ export const getPotreroByGanado = async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      'SELECT id_potrero FROM ubicacion WHERE id_ganado = ?',
+      'SELECT * FROM ubicacion WHERE id_ganado = ?',
       [id]
     );
 

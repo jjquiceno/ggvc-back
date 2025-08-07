@@ -127,6 +127,58 @@ export const updateDescendencias = async (req, res) => {
   }
 };
 
+// Actualizar un registro de descendencias por id_ganado
+export const updateDescendenciasByGanado = async (req, res) => {
+  const {
+    id
+  } = req.params;
+  const { id_madre, id_padre } = req.body;
+
+  try {
+    // Verifica que haya al menos un campo para actualizar
+    if (id_madre === undefined && id_padre === undefined) {
+      return res.status(400).json({
+        message: 'Debes enviar al menos id_madre o id_padre para actualizar.'
+      });
+    }
+
+    // Construcción dinámica de la consulta
+    const campos = [];
+    const valores = [];
+
+    if (id_madre !== undefined) {
+      campos.push('id_madre = ?');
+      valores.push(id_madre || null); // null si es undefined o 0
+    }
+
+    if (id_padre !== undefined) {
+      campos.push('id_padre = ?');
+      valores.push(id_padre || null);
+    }
+
+    valores.push(id); // para el WHERE
+
+    const sql = `UPDATE descendencias SET ${campos.join(', ')} WHERE id_ganado = ?`;
+
+    const [result] = await pool.query(sql, valores);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        message: 'Descendencia no encontrada para actualizar'
+      });
+    }
+
+    res.json({
+      message: 'Descendencia actualizada exitosamente'
+    });
+  } catch (err) {
+    console.error('Error al actualizar descendencia:', err);
+    res.status(500).json({
+      message: 'Error interno del servidor'
+    });
+  }
+};
+
 
 // Eliminar un registro de descendencias
 export const deleteDescendencias = async (req, res) => {

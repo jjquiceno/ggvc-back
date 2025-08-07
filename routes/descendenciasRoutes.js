@@ -4,6 +4,7 @@ import {
   getDescendenciasById,
   createDescendencias,
   updateDescendencias,
+  updateDescendenciasByGanado,
   deleteDescendencias
 } from '../controllers/descendenciasController.js';
 
@@ -14,6 +15,7 @@ router.get('/:id', getDescendenciasById);
 router.get('/ganado/:id', getDescendenciasById);
 router.post('/', createDescendencias);
 router.put('/:id', updateDescendencias);
+router.patch('/ganado/:id', updateDescendenciasByGanado);
 router.delete('/:id', deleteDescendencias);
 
 export default router;
