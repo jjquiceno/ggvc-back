@@ -115,7 +115,7 @@ export const deleteUbicacion = async (req, res) => {
     id
   } = req.params;
   try {
-    const [result] = await pool.query('DELETE FROM ubicacion WHERE id_ubicacion = ?', [id]);
+    const [result] = await pool.query('DELETE FROM ubicacion WHERE id_ganado = ?', [id]);
     if (result.affectedRows === 0) {
       return res.status(404).json({
         message: 'Ubicacion no encontrada para eliminar'
