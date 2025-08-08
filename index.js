@@ -15,6 +15,7 @@ import ubicacionRoutes from './routes/ubicacionRoutes.js';
 import sanitarioRoutes from './routes/sanitarioRoutes.js';
 import palpacionesRoutes from './routes/palpacionesRoutes.js';
 import descendenciasRoutes from './routes/descendenciasRoutes.js';
+import visitasRoutes from './routes/visitasRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -66,6 +67,9 @@ app.use('/api/palpaciones', palpacionesRoutes);
 
 // Usar las rutas de descendencias
 app.use('/api/descendencias', descendenciasRoutes);
+
+// Usar las rutas de visitas_medicas
+app.use('/api/visitas', visitasRoutes);
 
 
 // Manejo de errores para rutas no encontradas
