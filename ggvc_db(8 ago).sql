@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 07, 2025 at 12:13 AM
+-- Generation Time: Aug 09, 2025 at 03:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -85,10 +85,15 @@ CREATE TABLE `descendencias` (
 --
 
 INSERT INTO `descendencias` (`id_descendencia`, `id_ganado`, `id_madre`, `id_padre`) VALUES
-(2, 1, 4, 8),
-(3, 4, 4, 6),
-(4, 5, 7, NULL),
-(5, 10, 1, 8);
+(2, 1, NULL, NULL),
+(3, 4, 5, 10),
+(4, 5, 11, 8),
+(5, 10, 1, NULL),
+(6, 11, 4, 8),
+(7, 9, 1, 5),
+(8, 6, 4, 10),
+(9, 7, NULL, 10),
+(10, 12, 7, 6);
 
 -- --------------------------------------------------------
 
@@ -112,7 +117,8 @@ CREATE TABLE `empleado` (
 INSERT INTO `empleado` (`id_empleado`, `usuario`, `dni`, `nombre`, `email`, `telefono`) VALUES
 (3, 'isa123', 1000, 'isabella', 'isa@g.c', '4040404'),
 (5, 'user', 123456, 'UserLogin', 'user@gmail.com', '78549621'),
-(6, 'Edwin', 1033187160, 'Edison', '10331@gmail.com', '1033187');
+(6, 'Edwin', 1033187160, 'Edison', '10331@gmail.com', '1033187'),
+(7, 'Luis', 1017154444, 'Cesar', 'cesar@gmail.com', '111111');
 
 -- --------------------------------------------------------
 
@@ -156,11 +162,13 @@ INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`,
 (1, 'Lunita', 'Holstein', 'Hembra', '2022-03-15', 'Finca Los Álamos', 'Carne', 'Sano', 'Animal tranquilo, buen rendimiento, tiene una mancha con forma de luna en la parte izquierda del lomo, es blanca y café'),
 (4, 'Princesa', 'Braham', 'Hembra', NULL, 'Compra', NULL, 'Amamantamiento', ''),
 (5, 'ss', 'ss', 'Macho', NULL, 'sss', NULL, 'Amamantamiento', ''),
-(6, 'd', 'd', 'Hembra', NULL, 'd', NULL, 'Amamantamiento', ''),
-(7, 'fff', 'fff', 'Macho', '2025-07-03', 'fff', 'Reproducción', 'Sano', ''),
+(6, 'Spartacus', 'Hereford', 'Macho', '2022-07-12', 'Compra', 'Reproducción', 'Enfermo', 'Rojizo con cara blanca. Tranquilo, buen peso y rusticidad.'),
+(7, 'Lechera', 'Jersey', 'Hembra', '2025-07-07', 'Cria', 'Leche', 'Enfermo', 'Vaquita pequeña, destinada a leche'),
 (8, 'Thor', 'Sebu', 'Macho', '2019-06-13', 'Inseminacion', 'Reproducción', 'Enfermo', ''),
 (9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez', ''),
-(10, 'Pinto', 'Braham', 'Macho', '2018-05-22', 'Compra', 'Reproducción', 'Sano', 'Toro en buenas condiciones corporales para reproducción tiene una pinta blanca en la cabeza, el restoo es cafe');
+(10, 'Pinto', 'Braham', 'Macho', '2018-05-22', 'Compra', 'Reproducción', 'Sano', 'Toro en buenas condiciones corporales para reproducción tiene una pinta blanca en la cabeza, el restoo es cafe'),
+(11, 'Lucero', 'Hoster', 'Hembra', '2025-08-05', 'Reproduccion', 'Leche', 'Sano', 'Lucero es muy pasiva, le gusta la compañia, etc'),
+(12, 'Shaggy', 'Braham', 'Macho', '2025-01-14', 'Compra', 'Reproducción', 'Sano', 'Es muy caliente');
 
 -- --------------------------------------------------------
 
@@ -266,7 +274,7 @@ CREATE TABLE `plan_sanitario` (
 --
 
 INSERT INTO `plan_sanitario` (`id_sanidad`, `fecha_aplicacion`, `tipo_actividad`, `id_ganado`, `dosis`, `supervisor`, `observaciones`) VALUES
-(3, '2025-07-29', 'Vacunación', 4, '2 ml', 'Carlos Pérez', 'Aplicación de vacuna contra fiebre aftosa. Ganado tranquilo y sin reacciones.');
+(4, '2025-07-29', 'Vacunación', 4, '2 ml', 'Carlos Pérez', 'Aplicación de vacuna contra fiebre aftosa. Ganado tranquilo y sin reacciones.');
 
 -- --------------------------------------------------------
 
@@ -348,10 +356,12 @@ INSERT INTO `ubicacion` (`id_ubicacion`, `id_potrero`, `id_ganado`) VALUES
 (2, 2, 1),
 (5, 2, 4),
 (6, 2, 4),
-(7, 3, 7),
-(8, 3, 7),
 (9, 3, 8),
-(10, 2, 10);
+(10, 3, 10),
+(12, 2, 9),
+(13, 2, 6),
+(14, 3, 7),
+(15, 3, 12);
 
 -- --------------------------------------------------------
 
@@ -374,7 +384,33 @@ CREATE TABLE `usuarios` (
 INSERT INTO `usuarios` (`usuario`, `contraseña`, `rol`, `dni`, `nombre`) VALUES
 ('Edwin', '$2b$10$orxrhxGV1yH7u3TBD4tM6efjb4FLzz7QU5fi6zRiNyImfrZ8nKrSq', 'admin', 1033187160, 'Edison'),
 ('isa123', 'newPassword', 'admin', 1000, 'isabella'),
+('Luis', '$2b$10$XFFIIwyxEFEkNyg2wDSwjeNX3M6lAhbSFN3TCUbHE1lgAXaGDQuMm', 'admin', 1017154444, 'Cesar'),
 ('user', '$2b$10$EcLc4VJM5.BCwrcApw8ryeE6.oQiY6QK.t3Ag9Mtf8owFK3a03yRS', 'empleado', 123456, 'UserLogin');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `visitas_medicas`
+--
+
+CREATE TABLE `visitas_medicas` (
+  `id_visita` int(11) NOT NULL,
+  `id_ganado` int(11) NOT NULL,
+  `fecha_visita` datetime NOT NULL,
+  `motivo` enum('REVISION_GENERAL','VACUNACION','TRATAMIENTO_ENFERMEDAD','HERIDA','PARTO','REVISION_REPRODUCTIVA') NOT NULL,
+  `sintomas` text DEFAULT NULL,
+  `diagnostico` text NOT NULL,
+  `tratamiento` text DEFAULT NULL,
+  `prox_visita` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `visitas_medicas`
+--
+
+INSERT INTO `visitas_medicas` (`id_visita`, `id_ganado`, `fecha_visita`, `motivo`, `sintomas`, `diagnostico`, `tratamiento`, `prox_visita`) VALUES
+(1, 1, '2025-08-08 10:30:00', 'TRATAMIENTO_ENFERMEDAD', 'Pérdida de apetito y ligera cojera en la pata trasera izquierda.', 'Infección leve en la articulación de la pata trasera izquierda.', 'Administración de antibióticos orales por 5 días y limpieza diaria de la herida.', '2025-08-15'),
+(3, 1, '2025-08-15 14:30:00', 'TRATAMIENTO_ENFERMEDAD', 'Pérdida de apetito y ligera cojera en la pata trasera izquierda.', 'Infección leve en la articulación de la pata trasera izquierda.', 'Limpieza diaria de la herida hasta finalizar cicatrización.', '2025-08-25');
 
 --
 -- Indexes for dumped tables
@@ -505,6 +541,13 @@ ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`usuario`);
 
 --
+-- Indexes for table `visitas_medicas`
+--
+ALTER TABLE `visitas_medicas`
+  ADD PRIMARY KEY (`id_visita`),
+  ADD KEY `fk_visita_ganado` (`id_ganado`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -524,13 +567,13 @@ ALTER TABLE `defuncion_ganado`
 -- AUTO_INCREMENT for table `descendencias`
 --
 ALTER TABLE `descendencias`
-  MODIFY `id_descendencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_descendencia` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `empleado`
 --
 ALTER TABLE `empleado`
-  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `enfermedades`
@@ -542,7 +585,7 @@ ALTER TABLE `enfermedades`
 -- AUTO_INCREMENT for table `ganado`
 --
 ALTER TABLE `ganado`
-  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `mano_de_obra`
@@ -560,7 +603,7 @@ ALTER TABLE `palpaciones`
 -- AUTO_INCREMENT for table `plan_sanitario`
 --
 ALTER TABLE `plan_sanitario`
-  MODIFY `id_sanidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_sanidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `potreros`
@@ -572,7 +615,13 @@ ALTER TABLE `potreros`
 -- AUTO_INCREMENT for table `ubicacion`
 --
 ALTER TABLE `ubicacion`
-  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `visitas_medicas`
+--
+ALTER TABLE `visitas_medicas`
+  MODIFY `id_visita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -652,6 +701,12 @@ ALTER TABLE `req_BPG`
 ALTER TABLE `ubicacion`
   ADD CONSTRAINT `ubicacion_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`),
   ADD CONSTRAINT `ubicacion_ibfk_2` FOREIGN KEY (`id_potrero`) REFERENCES `potreros` (`id_potrero`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `visitas_medicas`
+--
+ALTER TABLE `visitas_medicas`
+  ADD CONSTRAINT `fk_visita_ganado` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
