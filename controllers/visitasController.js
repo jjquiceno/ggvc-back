@@ -1,3 +1,5 @@
+// controllers/visitasController.js
+
 import pool from '../config/db.js';
 
 // Obtener todos los registros de visitas
@@ -34,7 +36,7 @@ export const getVisitasByGanado = async (req, res) => {
   }
 };
 
-// Crear un nuevo registro de visitas_medicas
+// Crear un nuevo registro de visitas_medicas con validación de campos
 export const createVisitas = async (req, res) => {
   const {
     id_ganado,
@@ -45,6 +47,14 @@ export const createVisitas = async (req, res) => {
     tratamiento,
     prox_visita
   } = req.body;
+
+  // Validación de campos requeridos antes de la consulta SQL
+  if (!id_ganado || !fecha_visita || !motivo || !diagnostico) {
+    return res.status(400).json({
+      message: 'Faltan campos obligatorios: id_ganado, fecha_visita, motivo, diagnostico'
+    });
+  }
+
   try {
     const [result] = await pool.query(
       'INSERT INTO visitas_medicas (id_ganado, fecha_visita, motivo, sintomas, diagnostico, tratamiento, prox_visita) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -75,27 +85,18 @@ export const updateVisitas = async (req, res) => {
   } = req.body;
   const { id } = req.params;
   try {
-
     const [ganadoRows] = await pool.query(
       'SELECT id_ganado FROM ganado WHERE id_ganado = ?',
       [id_ganado]
     );
-
     if (ganadoRows.length === 0) {
       return res.status(400).json({
         message: `No existe ningún animal con id_ganado = ${id_ganado}`
       });
     }
-    
     const [result] = await pool.query(
       'UPDATE visitas_medicas SET id_ganado = ?, fecha_visita = ?, motivo = ?, sintomas = ?, diagnostico = ?, tratamiento = ?, prox_visita = ? WHERE id_visita = ?',
-      [id_ganado,
-        fecha_visita,
-        motivo,
-        sintomas,
-        diagnostico,
-        tratamiento,
-        prox_visita, id]
+      [id_ganado, fecha_visita, motivo, sintomas, diagnostico, tratamiento, prox_visita, id]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -113,9 +114,7 @@ export const updateVisitas = async (req, res) => {
   }
 };
 
-
 // Eliminar un registro de visitas_medicas
-
 export const deleteVisitas = async (req, res) => {
   const {
     id
