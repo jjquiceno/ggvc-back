@@ -13,19 +13,19 @@ export const getAllSanidad = async (req, res) => {
     }
 };
 
-// Obtener un registro de plan_sanitario por ID
+// Obtener todos los registros de plan_sanitario por ID del ganado
 export const getSanidadById = async (req, res) => {
     const {
         id
     } = req.params;
     try {
-        const [rows] = await pool.query('SELECT * FROM plan_sanitario WHERE id_sanidad = ?', [id]);
+        const [rows] = await pool.query('SELECT * FROM plan_sanitario WHERE id_ganado = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({
                 message: 'Plan sanitario no encontrado'
             });
         }
-        res.json(rows[0]);
+        res.json(rows);
     } catch (err) {
         console.error('Error al obtener plan sanitario por ID:', err);
         res.status(500).json({
