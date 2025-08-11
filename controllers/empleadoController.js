@@ -95,6 +95,52 @@ export const updateEmpleado = async (req, res) => {
   }
 };
 
+// PATCH para actualizar empleado usando usuario como FK
+export const patchEmpleadoByUsuario = async (req, res) => {
+  const { user } = req.params; // FK usuario
+  const { nombre, email, telefono } = req.body;
+
+  try {
+    // Construimos el SET dinámicamente
+    const campos = [];
+    const valores = [];
+
+    if (nombre !== undefined) {
+      campos.push('nombre = ?');
+      valores.push(nombre);
+    }
+    if (email !== undefined) {
+      campos.push('email = ?');
+      valores.push(email);
+    }
+    if (telefono !== undefined) {
+      campos.push('telefono = ?');
+      valores.push(telefono);
+    }
+
+    if (campos.length === 0) {
+      return res.status(400).json({ message: 'No se enviaron campos para actualizar' });
+    }
+
+    // Agregamos el FK usuario al final para el WHERE
+    valores.push(user);
+
+    const [result] = await pool.query(
+      `UPDATE empleado SET ${campos.join(', ')} WHERE usuario = ?`,
+      valores
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Empleado no encontrado para actualizar' });
+    }
+
+    res.json({ message: 'Empleado actualizado exitosamente' });
+  } catch (err) {
+    console.error('Error al actualizar empleado:', err);
+    res.status(500).json({ message: 'Error interno del servidor' });
+  }
+};
+
 // Eliminar un registro de empleado
 export const deleteEmpleado = async (req, res) => {
   const {
