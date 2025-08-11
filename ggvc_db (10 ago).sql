@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 09, 2025 at 03:27 AM
+-- Generation Time: Aug 11, 2025 at 05:06 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -274,7 +274,9 @@ CREATE TABLE `plan_sanitario` (
 --
 
 INSERT INTO `plan_sanitario` (`id_sanidad`, `fecha_aplicacion`, `tipo_actividad`, `id_ganado`, `dosis`, `supervisor`, `observaciones`) VALUES
-(4, '2025-07-29', 'Vacunación', 4, '2 ml', 'Carlos Pérez', 'Aplicación de vacuna contra fiebre aftosa. Ganado tranquilo y sin reacciones.');
+(4, '2025-07-29', 'Vacunación', 4, '2 ml', 'Carlos Pérez', 'Aplicación de vacuna contra fiebre aftosa. Ganado tranquilo y sin reacciones.'),
+(6, '2025-08-10', 'Vacunación', 1, '3ml', 'Sara Díez', 'Sin complicaciones'),
+(7, '2025-08-09', 'Vitaminización', 5, '5ml', 'Luis Muñoz', 'Aplicacion de vitaminas b12');
 
 -- --------------------------------------------------------
 
@@ -333,7 +335,7 @@ CREATE TABLE `req_BPG` (
   `id_req` int(11) NOT NULL,
   `Id_empleado` int(11) DEFAULT NULL,
   `fecha` date DEFAULT NULL,
-  `req_cumplido` varchar(100) DEFAULT NULL
+  `req_cumplido` enum('Sanidad animal','Identificación individual','Bioseguridad','Higiene ordeño','Medicamentos veterinarios','Alimentación animal','Bienestar animal','Capacitación personal','Infraestructura','Trazabilidad y registros','Saneamiento') DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -410,7 +412,8 @@ CREATE TABLE `visitas_medicas` (
 
 INSERT INTO `visitas_medicas` (`id_visita`, `id_ganado`, `fecha_visita`, `motivo`, `sintomas`, `diagnostico`, `tratamiento`, `prox_visita`) VALUES
 (1, 1, '2025-08-08 10:30:00', 'TRATAMIENTO_ENFERMEDAD', 'Pérdida de apetito y ligera cojera en la pata trasera izquierda.', 'Infección leve en la articulación de la pata trasera izquierda.', 'Administración de antibióticos orales por 5 días y limpieza diaria de la herida.', '2025-08-15'),
-(3, 1, '2025-08-15 14:30:00', 'TRATAMIENTO_ENFERMEDAD', 'Pérdida de apetito y ligera cojera en la pata trasera izquierda.', 'Infección leve en la articulación de la pata trasera izquierda.', 'Limpieza diaria de la herida hasta finalizar cicatrización.', '2025-08-25');
+(3, 1, '2025-08-15 14:30:00', 'TRATAMIENTO_ENFERMEDAD', 'Pérdida de apetito y ligera cojera en la pata trasera izquierda.', 'Infección leve en la articulación de la pata trasera izquierda.', 'Limpieza diaria de la herida hasta finalizar cicatrización.', '2025-08-25'),
+(4, 4, '2025-08-10 00:00:00', 'REVISION_GENERAL', 'Fiebre, falta de apetito', 'Infección bacteriana', 'Antibióticos durante 5 días', '2025-08-17');
 
 --
 -- Indexes for dumped tables
@@ -603,7 +606,7 @@ ALTER TABLE `palpaciones`
 -- AUTO_INCREMENT for table `plan_sanitario`
 --
 ALTER TABLE `plan_sanitario`
-  MODIFY `id_sanidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id_sanidad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `potreros`
@@ -621,7 +624,7 @@ ALTER TABLE `ubicacion`
 -- AUTO_INCREMENT for table `visitas_medicas`
 --
 ALTER TABLE `visitas_medicas`
-  MODIFY `id_visita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_visita` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
