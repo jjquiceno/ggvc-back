@@ -39,6 +39,14 @@ export const createPotrero = async (req, res) => {
   const {
     nombre_potrero
   } = req.body;
+  
+  // Validar que el campo nombre_potrero esté presente
+  if (!nombre_potrero) {
+    return res.status(400).json({
+      message: 'El campo nombre_potrero es requerido'
+    });
+  }
+
   try {
     const [result] = await pool.query(
       'INSERT INTO potreros (nombre_potrero) VALUES (?)',
