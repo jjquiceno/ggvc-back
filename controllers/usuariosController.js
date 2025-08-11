@@ -153,6 +153,16 @@ export const loginUsuario = async (req, res) => {
 
     const user = rows[0];
 
+    const [rowsEmpleado] = await pool.query('SELECT * FROM empleado WHERE usuario = ?', [usuario]);
+
+    if (rowsEmpleado.length === 0) {
+      return res.status(404).json({
+        message: 'Empleado no encontrado'
+      });
+    }
+
+    const empleado = rowsEmpleado[0];
+
     // Verificar la contraseña
     const isPasswordValid = await bcrypt.compare(contrasena, user.contraseña);
     
@@ -164,7 +174,7 @@ export const loginUsuario = async (req, res) => {
 
     // Generar un token JWT
     const token = jwt.sign(
-      { usuario: user.usuario, nombre: user.nombre},
+      { usuario: user.usuario, nombre: user.nombre, rol: user.rol, email: empleado.email },
       SECRET_JWT_KEY, // Clave secreta para firmar el token
       { expiresIn: '1d' } // 1 día de duración
     );
