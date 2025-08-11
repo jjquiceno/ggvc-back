@@ -13,19 +13,18 @@ export const getAllSanidad = async (req, res) => {
     }
 };
 
-// Obtener todos los registros de plan_sanitario por ID del ganado
+// Obtener un registro de plan_sanitario por su ID
+// Este endpoint ahora busca por id_sanidad en lugar de id_ganado
 export const getSanidadById = async (req, res) => {
-    const {
-        id
-    } = req.params;
+    const { id } = req.params;
     try {
-        const [rows] = await pool.query('SELECT * FROM plan_sanitario WHERE id_ganado = ?', [id]);
+        const [rows] = await pool.query('SELECT * FROM plan_sanitario WHERE id_sanidad = ?', [id]);
         if (rows.length === 0) {
             return res.status(404).json({
                 message: 'Plan sanitario no encontrado'
             });
         }
-        res.json(rows);
+        res.json(rows[0]); // Devolver solo el primer registro encontrado
     } catch (err) {
         console.error('Error al obtener plan sanitario por ID:', err);
         res.status(500).json({
@@ -34,11 +33,9 @@ export const getSanidadById = async (req, res) => {
     }
 };
 
-// Obtener registros de plan_sanitario por id_ganado (necesario para tu test)
+// Obtener registros de plan_sanitario por id_ganado
 export const getSanidadByGanadoId = async (req, res) => {
-    const {
-        id
-    } = req.params;
+    const { id } = req.params;
     try {
         const [rows] = await pool.query('SELECT * FROM plan_sanitario WHERE id_ganado = ?', [id]);
         res.json(rows);

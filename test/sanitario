@@ -110,18 +110,31 @@ describe('API /api/plan_sanitario', () => {
   test('GET /api/plan_sanitario/:id - Debe obtener un registro de sanidad por ID', async () => {
     // Primero creamos un registro de prueba
     const testData = createSanidadData(testGanadoId);
+    console.log('Datos de prueba para crear:', testData);
+    
     const createRes = await request(app)
       .post('/api/plan_sanitario')
       .send(testData);
-
+    
+    console.log('Respuesta de creación:', createRes.body);
+    expect(createRes.statusCode).toBe(201);
+    
     const idToTest = createRes.body.id_sanidad;
+    console.log('ID del registro creado:', idToTest);
 
     // Ahora probamos obtenerlo
     const res = await request(app).get(`/api/plan_sanitario/${idToTest}`);
+    console.log('Respuesta de consulta:', res.body);
 
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty('id_sanidad', idToTest);
     expect(res.body.id_ganado).toBe(testGanadoId);
+    
+    // Verificamos que el tipo_actividad no esté vacío
+    expect(res.body.tipo_actividad).toBeDefined();
+    expect(res.body.tipo_actividad).not.toBe('');
+    
+    // Verificamos el valor exacto esperado
     expect(res.body.tipo_actividad).toBe('Desparasitación');
 
     // Limpiar después de la prueba
