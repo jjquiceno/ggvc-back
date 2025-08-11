@@ -1,0 +1,13 @@
+### Iniciar sesión de usuario
+@loginUsuario = POST http://localhost:3000/api/usuario/login
+Content-Type: application/json
+
+{
+  "usuario": "tu_usuario",
+  "contrasena": "tu_contraseña"
+}
+
+### Usar la ruta protegida con el token
+@token = {{loginUsuario.response.body.token}}
+GET http://localhost:3000/api/usuario/protected
+Authorization: Bearer {{token}}
