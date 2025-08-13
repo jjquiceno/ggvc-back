@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 11, 2025 at 05:06 AM
+-- Generation Time: Aug 13, 2025 at 05:32 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -115,8 +115,8 @@ CREATE TABLE `empleado` (
 --
 
 INSERT INTO `empleado` (`id_empleado`, `usuario`, `dni`, `nombre`, `email`, `telefono`) VALUES
-(3, 'isa123', 1000, 'isabella', 'isa@g.c', '4040404'),
-(5, 'user', 123456, 'UserLogin', 'user@gmail.com', '78549621'),
+(3, 'isa123', 1000, 'isabella', 'newemail@gmail.com', '4040404'),
+(5, 'user', 123456, 'UserLogin', 'micorreo@email.com', '78549621'),
 (6, 'Edwin', 1033187160, 'Edison', '10331@gmail.com', '1033187'),
 (7, 'Luis', 1017154444, 'Cesar', 'cesar@gmail.com', '111111');
 
@@ -333,10 +333,20 @@ CREATE TABLE `producciones` (
 
 CREATE TABLE `req_BPG` (
   `id_req` int(11) NOT NULL,
-  `Id_empleado` int(11) DEFAULT NULL,
+  `id_empleado` int(11) DEFAULT NULL,
   `fecha` date DEFAULT NULL,
-  `req_cumplido` enum('Sanidad animal','Identificación individual','Bioseguridad','Higiene ordeño','Medicamentos veterinarios','Alimentación animal','Bienestar animal','Capacitación personal','Infraestructura','Trazabilidad y registros','Saneamiento') DEFAULT NULL
+  `req_cumplido` enum('Sanidad animal','Identificación individual','Bioseguridad','Higiene ordeño','Medicamentos veterinarios','Alimentación animal','Bienestar animal','Capacitación personal','Infraestructura','Trazabilidad y registros','Saneamiento') DEFAULT NULL,
+  `descripcion` text NOT NULL,
+  `estado` enum('Cumplido','Pendiente') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `req_BPG`
+--
+
+INSERT INTO `req_BPG` (`id_req`, `id_empleado`, `fecha`, `req_cumplido`, `descripcion`, `estado`) VALUES
+(2, 7, '2025-08-13', 'Alimentación animal', 'Sales proporcionadas al hato', 'Cumplido'),
+(3, 5, '2025-08-13', 'Bioseguridad', 'Se instalaron pediluvios y se reforzó el control de ingreso de visitantes para evitar el ingreso de patógenos.', 'Cumplido');
 
 -- --------------------------------------------------------
 
@@ -355,7 +365,7 @@ CREATE TABLE `ubicacion` (
 --
 
 INSERT INTO `ubicacion` (`id_ubicacion`, `id_potrero`, `id_ganado`) VALUES
-(2, 2, 1),
+(2, 3, 1),
 (5, 2, 4),
 (6, 2, 4),
 (9, 3, 8),
@@ -385,9 +395,9 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`usuario`, `contraseña`, `rol`, `dni`, `nombre`) VALUES
 ('Edwin', '$2b$10$orxrhxGV1yH7u3TBD4tM6efjb4FLzz7QU5fi6zRiNyImfrZ8nKrSq', 'admin', 1033187160, 'Edison'),
-('isa123', 'newPassword', 'admin', 1000, 'isabella'),
+('isa123', '$2b$10$CTWnBL9THwrAUhsyi0p1peZVXjjQqUPJLUrjfQzGG4qwzlqI.ujB2', 'admin', 1000, 'isabella'),
 ('Luis', '$2b$10$XFFIIwyxEFEkNyg2wDSwjeNX3M6lAhbSFN3TCUbHE1lgAXaGDQuMm', 'admin', 1017154444, 'Cesar'),
-('user', '$2b$10$EcLc4VJM5.BCwrcApw8ryeE6.oQiY6QK.t3Ag9Mtf8owFK3a03yRS', 'empleado', 123456, 'UserLogin');
+('user', '$2b$10$20AarW4y8u.4oVHWQBO5V.NCfutU2ZsXVrzrK9RBoUTVSxI9hm26O', 'empleado', 123456, 'UserLogin');
 
 -- --------------------------------------------------------
 
@@ -527,7 +537,7 @@ ALTER TABLE `producciones`
 --
 ALTER TABLE `req_BPG`
   ADD PRIMARY KEY (`id_req`),
-  ADD KEY `Id_empleado` (`Id_empleado`);
+  ADD KEY `Id_empleado` (`id_empleado`);
 
 --
 -- Indexes for table `ubicacion`
@@ -613,6 +623,12 @@ ALTER TABLE `plan_sanitario`
 --
 ALTER TABLE `potreros`
   MODIFY `id_potrero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `req_BPG`
+--
+ALTER TABLE `req_BPG`
+  MODIFY `id_req` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ubicacion`
