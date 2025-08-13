@@ -233,9 +233,11 @@ export const updateUser = async (req, res) => {
   let updateFields = [];
   let queryParams = [];
 
+  const hashPassword = await bcrypt.hash(contrasena, SALT_ROUNDS);
+
   if (contrasena) {
     updateFields.push('contraseña = ?');
-    queryParams.push(contrasena);
+    queryParams.push(hashPassword);
   }
   if (rol) {
     updateFields.push('rol = ?');

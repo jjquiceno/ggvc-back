@@ -16,6 +16,7 @@ import sanitarioRoutes from './routes/sanitarioRoutes.js';
 import palpacionesRoutes from './routes/palpacionesRoutes.js';
 import descendenciasRoutes from './routes/descendenciasRoutes.js';
 import visitasRoutes from './routes/visitasRoutes.js';
+import requerimientosRoutes from './routes/requerimientosRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -70,6 +71,9 @@ app.use('/api/descendencias', descendenciasRoutes);
 
 // Usar las rutas de visitas_medicas
 app.use('/api/visitas', visitasRoutes);
+
+// Usar las rutas de req_BPG
+app.use('/api/requerimientos', requerimientosRoutes);
 
 
 // Manejo de errores para rutas no encontradas
