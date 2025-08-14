@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 11, 2025 at 05:06 AM
+-- Generation Time: Aug 14, 2025 at 06:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -115,10 +115,10 @@ CREATE TABLE `empleado` (
 --
 
 INSERT INTO `empleado` (`id_empleado`, `usuario`, `dni`, `nombre`, `email`, `telefono`) VALUES
-(3, 'isa123', 1000, 'isabella', 'isa@g.c', '4040404'),
-(5, 'user', 123456, 'UserLogin', 'user@gmail.com', '78549621'),
-(6, 'Edwin', 1033187160, 'Edison', '10331@gmail.com', '1033187'),
-(7, 'Luis', 1017154444, 'Cesar', 'cesar@gmail.com', '111111');
+(5, 'empleado', 11000, 'Camilo', 'micorreo@email.com', '78549621'),
+(6, 'Junior', 1033187160, 'Edison', '10331@gmail.com', '1033187'),
+(7, 'Luis', 1017154444, 'Cesar', 'cesar@gmail.com', '111111'),
+(8, 'isa-bella', 1033353, 'Isabella', 'isa@gmail.com', '4445555');
 
 -- --------------------------------------------------------
 
@@ -185,6 +185,15 @@ CREATE TABLE `mano_de_obra` (
   `duracion` varchar(15) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `mano_de_obra`
+--
+
+INSERT INTO `mano_de_obra` (`id_obra`, `fecha`, `id_empleado`, `tipo`, `actividad`, `duracion`) VALUES
+(4, '2025-07-25', 5, 'Contratada', 'Preparación del terreno para cultivo', '3 h'),
+(5, '2025-08-12', 7, 'Contratada', 'Ordeño de primera tanda', '6 h'),
+(6, '2025-08-13', 8, 'Prestación de servicios', 'Jornada de vacunación', '8 h');
+
 -- --------------------------------------------------------
 
 --
@@ -225,7 +234,8 @@ CREATE TABLE `palpaciones` (
 --
 
 INSERT INTO `palpaciones` (`id_palpacion`, `fecha`, `id_ganado`, `hallazgo`, `observaciones`, `condicion_corporal`, `palpador`, `utero`, `ovario_izq`, `ovario_der`) VALUES
-(2, '2025-07-29', 5, 'Preñez positiva', 'Se observó actividad uterina normal. Ganado tranquilo durante la evaluación.', 'Buena', 'Dra. Ana Gómez', 'Normal', 'Folículo presente', 'Cuerpo lúteo presente');
+(2, '2025-07-29', 5, 'Preñez positiva', 'Se observó actividad uterina normal. Ganado tranquilo durante la evaluación.', 'Buena', 'Dra. Ana Gómez', 'Normal', 'Folículo presente', 'Cuerpo lúteo presente'),
+(3, '2025-08-13', 7, 'Preñez de 3 meses', 'Animal en buen estado general, sin signos de enfermedad.', 'Muy_buena', 'Dr. Juan Pérez', 'Normal', 'Cuerpo lúteo', 'Folículo dominante');
 
 -- --------------------------------------------------------
 
@@ -248,10 +258,20 @@ CREATE TABLE `parto` (
 --
 
 CREATE TABLE `peso` (
-  `fecha` date NOT NULL,
+  `id_pesaje` int(11) NOT NULL,
   `peso` decimal(10,2) DEFAULT NULL,
+  `fecha` date NOT NULL,
   `id_ganado` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `peso`
+--
+
+INSERT INTO `peso` (`id_pesaje`, `peso`, `fecha`, `id_ganado`) VALUES
+(2, 280.50, '2025-08-01', 1),
+(3, 350.06, '2025-09-01', 1),
+(4, 550.63, '2025-10-01', 1);
 
 -- --------------------------------------------------------
 
@@ -321,9 +341,19 @@ CREATE TABLE `producciones` (
   `id_produccion` int(11) NOT NULL,
   `id_empleado` int(11) DEFAULT NULL,
   `fecha` date DEFAULT NULL,
-  `cantidad` decimal(10,2) DEFAULT NULL,
+  `litros` decimal(10,2) DEFAULT NULL,
   `descripcion` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `producciones`
+--
+
+INSERT INTO `producciones` (`id_produccion`, `id_empleado`, `fecha`, `litros`, `descripcion`) VALUES
+(3, 5, '2025-08-13', 25.70, 'Producción de la mañana'),
+(4, 6, '2025-08-17', 20.80, 'Producción de la mañana'),
+(5, 7, '2025-09-09', 28.20, 'Producción tarde'),
+(7, 5, '2025-10-22', 40.00, 'Correcto');
 
 -- --------------------------------------------------------
 
@@ -333,10 +363,20 @@ CREATE TABLE `producciones` (
 
 CREATE TABLE `req_BPG` (
   `id_req` int(11) NOT NULL,
-  `Id_empleado` int(11) DEFAULT NULL,
+  `id_empleado` int(11) DEFAULT NULL,
   `fecha` date DEFAULT NULL,
-  `req_cumplido` enum('Sanidad animal','Identificación individual','Bioseguridad','Higiene ordeño','Medicamentos veterinarios','Alimentación animal','Bienestar animal','Capacitación personal','Infraestructura','Trazabilidad y registros','Saneamiento') DEFAULT NULL
+  `req_cumplido` enum('Sanidad animal','Identificación individual','Bioseguridad','Higiene ordeño','Medicamentos veterinarios','Alimentación animal','Bienestar animal','Capacitación personal','Infraestructura','Trazabilidad y registros','Saneamiento') DEFAULT NULL,
+  `descripcion` text NOT NULL,
+  `estado` enum('Cumplido','Pendiente') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `req_BPG`
+--
+
+INSERT INTO `req_BPG` (`id_req`, `id_empleado`, `fecha`, `req_cumplido`, `descripcion`, `estado`) VALUES
+(2, 7, '2025-08-13', 'Alimentación animal', 'Sales proporcionadas al hato', 'Cumplido'),
+(3, 5, '2025-08-13', 'Bioseguridad', 'Se instalaron pediluvios y se reforzó el control de ingreso de visitantes para evitar el ingreso de patógenos.', 'Cumplido');
 
 -- --------------------------------------------------------
 
@@ -355,7 +395,7 @@ CREATE TABLE `ubicacion` (
 --
 
 INSERT INTO `ubicacion` (`id_ubicacion`, `id_potrero`, `id_ganado`) VALUES
-(2, 2, 1),
+(2, 3, 1),
 (5, 2, 4),
 (6, 2, 4),
 (9, 3, 8),
@@ -384,10 +424,10 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`usuario`, `contraseña`, `rol`, `dni`, `nombre`) VALUES
-('Edwin', '$2b$10$orxrhxGV1yH7u3TBD4tM6efjb4FLzz7QU5fi6zRiNyImfrZ8nKrSq', 'admin', 1033187160, 'Edison'),
-('isa123', 'newPassword', 'admin', 1000, 'isabella'),
-('Luis', '$2b$10$XFFIIwyxEFEkNyg2wDSwjeNX3M6lAhbSFN3TCUbHE1lgAXaGDQuMm', 'admin', 1017154444, 'Cesar'),
-('user', '$2b$10$EcLc4VJM5.BCwrcApw8ryeE6.oQiY6QK.t3Ag9Mtf8owFK3a03yRS', 'empleado', 123456, 'UserLogin');
+('empleado', '$2b$10$20AarW4y8u.4oVHWQBO5V.NCfutU2ZsXVrzrK9RBoUTVSxI9hm26O', 'empleado', 11000, 'Camilo'),
+('isa-bella', '$2b$10$Le/E0axhFPgNKDvmjSYn3O1VjfkcZ29upA19VJFm7vC9LePqo5Fce', 'admin', 1033353, 'Isabella'),
+('Junior', '$2b$10$jjYEMa6D.ACh0vQOMkwMbOjxjq2fKNx1/XQwEPUcL40p7eY7LOwU.', 'empleado', 1033187160, 'Edison'),
+('Luis', '$2b$10$XFFIIwyxEFEkNyg2wDSwjeNX3M6lAhbSFN3TCUbHE1lgAXaGDQuMm', 'admin', 1017154444, 'Cesar');
 
 -- --------------------------------------------------------
 
@@ -492,7 +532,7 @@ ALTER TABLE `parto`
 -- Indexes for table `peso`
 --
 ALTER TABLE `peso`
-  ADD PRIMARY KEY (`fecha`),
+  ADD PRIMARY KEY (`id_pesaje`),
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
@@ -527,7 +567,7 @@ ALTER TABLE `producciones`
 --
 ALTER TABLE `req_BPG`
   ADD PRIMARY KEY (`id_req`),
-  ADD KEY `Id_empleado` (`Id_empleado`);
+  ADD KEY `Id_empleado` (`id_empleado`);
 
 --
 -- Indexes for table `ubicacion`
@@ -576,7 +616,7 @@ ALTER TABLE `descendencias`
 -- AUTO_INCREMENT for table `empleado`
 --
 ALTER TABLE `empleado`
-  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_empleado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `enfermedades`
@@ -594,13 +634,19 @@ ALTER TABLE `ganado`
 -- AUTO_INCREMENT for table `mano_de_obra`
 --
 ALTER TABLE `mano_de_obra`
-  MODIFY `id_obra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_obra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `palpaciones`
 --
 ALTER TABLE `palpaciones`
-  MODIFY `id_palpacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_palpacion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `peso`
+--
+ALTER TABLE `peso`
+  MODIFY `id_pesaje` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `plan_sanitario`
@@ -613,6 +659,18 @@ ALTER TABLE `plan_sanitario`
 --
 ALTER TABLE `potreros`
   MODIFY `id_potrero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `producciones`
+--
+ALTER TABLE `producciones`
+  MODIFY `id_produccion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `req_BPG`
+--
+ALTER TABLE `req_BPG`
+  MODIFY `id_req` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `ubicacion`
