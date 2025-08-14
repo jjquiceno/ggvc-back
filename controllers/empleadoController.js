@@ -1,4 +1,5 @@
 import pool from '../config/db.js';
+import bcrypt from 'bcrypt'
 
 // Obtener todos los registros de empleado
 export const getAllEmpleados = async (req, res) => {
@@ -95,13 +96,12 @@ export const updateEmpleado = async (req, res) => {
   }
 };
 
-// PATCH para actualizar empleado usando usuario como FK
+// PATCH para actualizar empleado usando usuario
 export const patchEmpleadoByUsuario = async (req, res) => {
-  const { user } = req.params; // FK usuario
+  const { user } = req.params;
   const { nombre, email, telefono } = req.body;
 
   try {
-    // Construimos el SET dinámicamente
     const campos = [];
     const valores = [];
 
@@ -122,7 +122,6 @@ export const patchEmpleadoByUsuario = async (req, res) => {
       return res.status(400).json({ message: 'No se enviaron campos para actualizar' });
     }
 
-    // Agregamos el FK usuario al final para el WHERE
     valores.push(user);
 
     const [result] = await pool.query(
@@ -140,6 +139,112 @@ export const patchEmpleadoByUsuario = async (req, res) => {
     res.status(500).json({ message: 'Error interno del servidor' });
   }
 };
+
+export const patchEmpleadoYUsuario = async (req, res) => {
+  const { id_empleado } = req.params;
+  const {
+    usuario,
+    dni,
+    nombre,
+    email,
+    telefono,
+    contraseña,
+    rol,
+  } = req.body;
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // --- Obtener usuario actual ANTES de modificar empleado ---
+    const [userRows] = await conn.query(
+      "SELECT usuario FROM empleado WHERE id_empleado = ?",
+      [id_empleado]
+    );
+    if (userRows.length === 0) {
+      throw new Error("Empleado no encontrado");
+    }
+    const usuarioActual = userRows[0].usuario;
+
+    // --- Actualizar empleado ---
+    const empleadoFields = [];
+    const empleadoValues = [];
+
+    if (usuario) {
+      empleadoFields.push("usuario = ?");
+      empleadoValues.push(usuario);
+    }
+    if (dni) {
+      empleadoFields.push("dni = ?");
+      empleadoValues.push(dni);
+    }
+    if (nombre) {
+      empleadoFields.push("nombre = ?");
+      empleadoValues.push(nombre);
+    }
+    if (email) {
+      empleadoFields.push("email = ?");
+      empleadoValues.push(email);
+    }
+    if (telefono) {
+      empleadoFields.push("telefono = ?");
+      empleadoValues.push(telefono);
+    }
+
+    if (empleadoFields.length > 0) {
+      empleadoValues.push(id_empleado);
+      await conn.query(
+        `UPDATE empleado SET ${empleadoFields.join(", ")} WHERE id_empleado = ?`,
+        empleadoValues
+      );
+    }
+
+    // --- Actualizar usuarios ---
+    const usuarioFields = [];
+    const usuarioValues = [];
+
+    if (usuario) {
+      usuarioFields.push("usuario = ?");
+      usuarioValues.push(usuario);
+    }
+    if (dni) {
+      usuarioFields.push("dni = ?");
+      usuarioValues.push(dni);
+    }
+    if (nombre) {
+      usuarioFields.push("nombre = ?");
+      usuarioValues.push(nombre);
+    }
+    if (contraseña) {
+      const hashedPassword = await bcrypt.hash(contraseña, 10);
+      usuarioFields.push("contraseña = ?");
+      usuarioValues.push(hashedPassword);
+    }
+    if (rol) {
+      usuarioFields.push("rol = ?");
+      usuarioValues.push(rol);
+    }
+
+    if (usuarioFields.length > 0) {
+      usuarioValues.push(usuarioActual); // Usar el usuario original para el WHERE
+      await conn.query(
+        `UPDATE usuarios SET ${usuarioFields.join(", ")} WHERE usuario = ?`,
+        usuarioValues
+      );
+    }
+
+    await conn.commit();
+    res.json({ message: "Empleado y usuario actualizados correctamente" });
+
+  } catch (error) {
+    await conn.rollback();
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  } finally {
+    conn.release();
+  }
+};
+
 
 // Eliminar un registro de empleado
 export const deleteEmpleado = async (req, res) => {
