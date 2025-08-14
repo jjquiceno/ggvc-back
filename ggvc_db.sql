@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 14, 2025 at 06:04 AM
+-- Generation Time: Aug 14, 2025 at 07:51 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -197,18 +197,27 @@ INSERT INTO `mano_de_obra` (`id_obra`, `fecha`, `id_empleado`, `tipo`, `activida
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nuticion`
+-- Table structure for table `nutricion`
 --
 
-CREATE TABLE `nuticion` (
-  `fecha` date NOT NULL,
+CREATE TABLE `nutricion` (
+  `id_nutricion` int(11) NOT NULL,
   `id_ganado` int(11) DEFAULT NULL,
+  `fecha` date NOT NULL,
   `tipo_alimento` enum('Suplemento','Concentrado','Sal mineralizada') DEFAULT NULL,
   `nombre_alimento` varchar(100) DEFAULT NULL,
   `cantidad` decimal(10,2) DEFAULT NULL,
   `observaciones` text DEFAULT NULL,
-  `empleado` varchar(100) DEFAULT NULL
+  `supervisor` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `nutricion`
+--
+
+INSERT INTO `nutricion` (`id_nutricion`, `id_ganado`, `fecha`, `tipo_alimento`, `nombre_alimento`, `cantidad`, `observaciones`, `supervisor`) VALUES
+(2, 10, '2025-08-14', 'Concentrado', 'Concentrado Premium', 5.50, 'El animal presenta buen apetito', 'Juan Pérez'),
+(3, 8, '2025-08-14', 'Suplemento', 'Melaza', 8.00, 'Se administra como complemento energético', 'Carlos Gómez');
 
 -- --------------------------------------------------------
 
@@ -509,10 +518,10 @@ ALTER TABLE `mano_de_obra`
   ADD KEY `id_empleado` (`id_empleado`);
 
 --
--- Indexes for table `nuticion`
+-- Indexes for table `nutricion`
 --
-ALTER TABLE `nuticion`
-  ADD PRIMARY KEY (`fecha`),
+ALTER TABLE `nutricion`
+  ADD PRIMARY KEY (`id_nutricion`),
   ADD KEY `id_ganado` (`id_ganado`);
 
 --
@@ -637,6 +646,12 @@ ALTER TABLE `mano_de_obra`
   MODIFY `id_obra` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `nutricion`
+--
+ALTER TABLE `nutricion`
+  MODIFY `id_nutricion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `palpaciones`
 --
 ALTER TABLE `palpaciones`
@@ -715,10 +730,10 @@ ALTER TABLE `mano_de_obra`
   ADD CONSTRAINT `mano_de_obra_ibfk_1` FOREIGN KEY (`id_empleado`) REFERENCES `empleado` (`id_empleado`);
 
 --
--- Constraints for table `nuticion`
+-- Constraints for table `nutricion`
 --
-ALTER TABLE `nuticion`
-  ADD CONSTRAINT `nuticion_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`);
+ALTER TABLE `nutricion`
+  ADD CONSTRAINT `nutricion_ibfk_1` FOREIGN KEY (`id_ganado`) REFERENCES `ganado` (`id_ganado`);
 
 --
 -- Constraints for table `palpaciones`
