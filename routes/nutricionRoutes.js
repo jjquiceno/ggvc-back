@@ -5,7 +5,7 @@ import {
   createNutricion,
   updateNutricion,
   deleteNutricion
-} from '../controllers/nuticionController.js';
+} from '../controllers/nutricionController.js';
 
 const router = express.Router();
 

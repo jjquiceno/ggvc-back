@@ -16,7 +16,7 @@ import sanitarioRoutes from './routes/sanitarioRoutes.js';
 import palpacionesRoutes from './routes/palpacionesRoutes.js';
 import descendenciasRoutes from './routes/descendenciasRoutes.js';
 import visitasRoutes from './routes/visitasRoutes.js';
-import nutricionRoutes from './routes/nuticionRoutes.js';
+import nutricionRoutes from './routes/nutricionRoutes.js';
 import requerimientosRoutes from './routes/requerimientosRoutes.js';
 import pesoRoutes from './routes/pesoRoutes.js';
 import produccionesRoutes from './routes/produccionesRoutes.js';

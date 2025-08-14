@@ -3,10 +3,10 @@ import pool from '../config/db.js';
 // Obtener todos los registros de nutrición
 export const getAllNutricion = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM nuticion');
+    const [rows] = await pool.query('SELECT * FROM nutricion');
     res.json(rows);
   } catch (err) {
-    console.error('Error al obtener los registros de nutición:', err);
+    console.error('Error al obtener los registros de nutrición:', err);
     res.status(500).json({
       message: 'Error interno del servidor'
     });
@@ -19,16 +19,15 @@ export const getNutricionById = async (req, res) => {
     id
   } = req.params;
   try {
-    // La clave primaria ahora es `fecha`
-    const [rows] = await pool.query('SELECT * FROM nuticion WHERE fecha = ?', [id]);
+    const [rows] = await pool.query('SELECT * FROM nutricion WHERE id_nutricion = ?', [id]);
     if (rows.length === 0) {
       return res.status(404).json({
-        message: 'Registro de nutición no encontrado'
+        message: 'Registro de nutrición no encontrado'
       });
     }
     res.json(rows[0]);
   } catch (err) {
-    console.error('Error al obtener el registro de nutición por fecha:', err);
+    console.error('Error al obtener el registro de nutrición', err);
     res.status(500).json({
       message: 'Error interno del servidor'
     });
@@ -38,24 +37,25 @@ export const getNutricionById = async (req, res) => {
 // Crear un nuevo registro de nutrición
 export const createNutricion = async (req, res) => {
   const {
-    fecha,
     id_ganado,
+    fecha,
     tipo_alimento,
     nombre_alimento,
     cantidad,
     observaciones,
-    empleado
+    supervisor,
   } = req.body;
   try {
     const [result] = await pool.query(
-      'INSERT INTO nuticion (fecha, id_ganado, tipo_alimento, nombre_alimento, cantidad, observaciones, empleado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [fecha, id_ganado, tipo_alimento, nombre_alimento, cantidad, observaciones, empleado]
+      'INSERT INTO nutricion (id_ganado, fecha, tipo_alimento, nombre_alimento, cantidad, observaciones, supervisor) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [id_ganado, fecha, tipo_alimento, nombre_alimento, cantidad, observaciones, supervisor]
     );
     res.status(201).json({
-      message: 'Registro de nutición creado exitosamente'
+      message: 'Registro de nutrición creado exitosamente',
+      id_nutricion: result.insertId
     });
   } catch (err) {
-    console.error('Error al crear el registro de nutición:', err);
+    console.error('Error al crear el registro de nutrición:', err);
     res.status(500).json({
       message: 'Error interno del servidor'
     });
@@ -69,27 +69,28 @@ export const updateNutricion = async (req, res) => {
   } = req.params;
   const {
     id_ganado,
+    fecha,
     tipo_alimento,
     nombre_alimento,
     cantidad,
     observaciones,
-    empleado
+    supervisor
   } = req.body;
   try {
     const [result] = await pool.query(
-      'UPDATE nuticion SET id_ganado = ?, tipo_alimento = ?, nombre_alimento = ?, cantidad = ?, observaciones = ?, empleado = ? WHERE fecha = ?',
-      [id_ganado, tipo_alimento, nombre_alimento, cantidad, observaciones, empleado, id]
+      'UPDATE nutricion SET id_ganado = ?, fecha = ?, tipo_alimento = ?, nombre_alimento = ?, cantidad = ?, observaciones = ?, supervisor = ? WHERE id_nutricion = ?',
+      [id_ganado, fecha, tipo_alimento, nombre_alimento, cantidad, observaciones, supervisor, id]
     );
     if (result.affectedRows === 0) {
       return res.status(404).json({
-        message: 'Registro de nutición no encontrado para actualizar'
+        message: 'Registro de nutrición no encontrado para actualizar'
       });
     }
     res.json({
-      message: 'Registro de nutición actualizado exitosamente'
+      message: 'Registro de nutrición actualizado exitosamente'
     });
   } catch (err) {
-    console.error('Error al actualizar el registro de nutición:', err);
+    console.error('Error al actualizar el registro de nutrición:', err);
     res.status(500).json({
       message: 'Error interno del servidor'
     });
@@ -102,17 +103,17 @@ export const deleteNutricion = async (req, res) => {
     id
   } = req.params;
   try {
-    const [result] = await pool.query('DELETE FROM nuticion WHERE fecha = ?', [id]);
+    const [result] = await pool.query('DELETE FROM nutricion WHERE id_nutricion = ?', [id]);
     if (result.affectedRows === 0) {
       return res.status(404).json({
-        message: 'Registro de nutición no encontrado para eliminar'
+        message: 'Registro de nutrición no encontrado para eliminar'
       });
     }
     res.json({
-      message: 'Registro de nutición eliminado exitosamente'
+      message: 'Registro de nutrición eliminado exitosamente'
     });
   } catch (err) {
-    console.error('Error al eliminar el registro de nutición:', err);
+    console.error('Error al eliminar el registro de nutrición:', err);
     res.status(500).json({
       message: 'Error interno del servidor'
     });
