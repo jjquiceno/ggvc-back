@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 14, 2025 at 07:51 PM
+-- Generation Time: Aug 22, 2025 at 04:14 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -85,8 +85,8 @@ CREATE TABLE `descendencias` (
 --
 
 INSERT INTO `descendencias` (`id_descendencia`, `id_ganado`, `id_madre`, `id_padre`) VALUES
-(2, 1, NULL, NULL),
-(3, 4, 5, 10),
+(2, 1, 7, NULL),
+(3, 4, 7, 10),
 (4, 5, 11, 8),
 (5, 10, 1, NULL),
 (6, 11, 4, 8),
@@ -168,7 +168,9 @@ INSERT INTO `ganado` (`id_ganado`, `nombre`, `raza`, `sexo`, `fecha_nacimiento`,
 (9, 'Gacela', 'Pionera', 'Hembra', '2001-12-01', 'Finca Fernando', 'Leche', 'Prenez', ''),
 (10, 'Pinto', 'Braham', 'Macho', '2018-05-22', 'Compra', 'Reproducción', 'Sano', 'Toro en buenas condiciones corporales para reproducción tiene una pinta blanca en la cabeza, el restoo es cafe'),
 (11, 'Lucero', 'Hoster', 'Hembra', '2025-08-05', 'Reproduccion', 'Leche', 'Sano', 'Lucero es muy pasiva, le gusta la compañia, etc'),
-(12, 'Shaggy', 'Braham', 'Macho', '2025-01-14', 'Compra', 'Reproducción', 'Sano', 'Es muy caliente');
+(12, 'Shaggy', 'Braham', 'Macho', '2025-01-14', 'Compra', 'Reproducción', 'Sano', 'Es muy caliente'),
+(28, '1', '1', 'Hembra', '2025-08-13', '1', 'Leche', 'Prenez', '1'),
+(29, '1', '1', 'Hembra', '2025-08-13', '1', 'Leche', 'Prenez', '1');
 
 -- --------------------------------------------------------
 
@@ -335,10 +337,23 @@ INSERT INTO `potreros` (`id_potrero`, `nombre_potrero`) VALUES
 CREATE TABLE `preñez` (
   `id_prenez` int(11) NOT NULL,
   `id_ganado` int(11) DEFAULT NULL,
-  `fecha de_hallazgo` date DEFAULT NULL,
-  `posible_fecha_de_parto` date DEFAULT NULL,
-  `tiempo_de gestación` int(11) DEFAULT NULL
+  `fecha_monta` date DEFAULT NULL,
+  `metodo` enum('Monta natural','Inseminación artificial','Sincronización de celos','Transferencia de embriones') NOT NULL,
+  `responsable` varchar(100) NOT NULL,
+  `estado` enum('activa','finalizada') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `preñez`
+--
+
+INSERT INTO `preñez` (`id_prenez`, `id_ganado`, `fecha_monta`, `metodo`, `responsable`, `estado`) VALUES
+(2, 1, NULL, 'Inseminación artificial', 'Juliana Lopez', 'finalizada'),
+(3, 1, '2025-08-21', 'Monta natural', 'Juliana Lopez', 'finalizada'),
+(4, NULL, '2025-08-12', 'Inseminación artificial', 'Ismelda Montoya', 'activa'),
+(5, NULL, '2025-08-17', 'Transferencia de embriones', 'Sara Garzón', 'activa'),
+(6, 4, '2025-08-10', 'Transferencia de embriones', 'Sara Garzón', 'activa'),
+(7, 9, '2025-08-20', 'Monta natural', 'Mateo Carvajal', 'activa');
 
 -- --------------------------------------------------------
 
@@ -384,7 +399,7 @@ CREATE TABLE `req_BPG` (
 --
 
 INSERT INTO `req_BPG` (`id_req`, `id_empleado`, `fecha`, `req_cumplido`, `descripcion`, `estado`) VALUES
-(2, 7, '2025-08-13', 'Alimentación animal', 'Sales proporcionadas al hato', 'Cumplido'),
+(2, 6, '2025-08-14', 'Alimentación animal', 'Sales proporcionadas al hato', 'Cumplido'),
 (3, 5, '2025-08-13', 'Bioseguridad', 'Se instalaron pediluvios y se reforzó el control de ingreso de visitantes para evitar el ingreso de patógenos.', 'Cumplido');
 
 -- --------------------------------------------------------
@@ -637,7 +652,7 @@ ALTER TABLE `enfermedades`
 -- AUTO_INCREMENT for table `ganado`
 --
 ALTER TABLE `ganado`
-  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_ganado` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `mano_de_obra`
@@ -674,6 +689,12 @@ ALTER TABLE `plan_sanitario`
 --
 ALTER TABLE `potreros`
   MODIFY `id_potrero` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `preñez`
+--
+ALTER TABLE `preñez`
+  MODIFY `id_prenez` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `producciones`

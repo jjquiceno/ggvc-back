@@ -20,6 +20,7 @@ import nutricionRoutes from './routes/nutricionRoutes.js';
 import requerimientosRoutes from './routes/requerimientosRoutes.js';
 import pesoRoutes from './routes/pesoRoutes.js';
 import produccionesRoutes from './routes/produccionesRoutes.js';
+import prenezRoutes from './routes/prenezRoutes.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -87,6 +88,9 @@ app.use('/api/producciones', produccionesRoutes);
 
 // Usar las rutas de nutricion
 app.use('/api/nutricion', nutricionRoutes);
+
+// Usar las rutas de preñez
+app.use('/api/prenez', prenezRoutes);
 
 // Manejo de errores para rutas no encontradas
 app.use((req, res, next) => {
