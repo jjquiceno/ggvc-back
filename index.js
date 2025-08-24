@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import ganadoRoutes from './routes/ganadoRoutes.js'; 
 import empleadoRoutes from './routes/empleadoRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js'; 
-import criaRoutes from './routes/criaRoutes.js';
+import partoRoutes from './routes/partoRoutes.js';
 import defuncionRoutes from './routes/defuncionRoutes.js';
 import enfermedadesRoutes from './routes/enfermedadesRoutes.js';
 import manoDeObraRoutes from './routes/manoDeObraRoutes.js';
@@ -46,8 +46,8 @@ app.use('/api/empleado', empleadoRoutes);
 // Usar las rutas de usuario
 app.use('/api/usuario', usuarioRoutes);
 
-// Usar las rutas de cria
-app.use('/api/cria', criaRoutes);
+// Usar las rutas de parto
+app.use('/api/parto', partoRoutes);
 
 // Usar las rutas de defuncion
 app.use('/api/defuncion', defuncionRoutes);
